@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.Net;
 using JiebaNet.Segmenter;
 using NMeCab;
 using System.Text;
@@ -49,6 +50,7 @@ namespace NGramm
 
         private ConcurrentBag<NGrammContainer> symbol_ngrams = new ConcurrentBag<NGrammContainer>();
         private ConcurrentBag<NGrammContainer> words_ngrams = new ConcurrentBag<NGrammContainer>();
+        private ConcurrentBag<NGrammContainer> code_words_ngrams = new ConcurrentBag<NGrammContainer>();
         private ConcurrentBag<NGrammContainer> literal_ngrams = new ConcurrentBag<NGrammContainer>();
 
         private readonly string _filename;
@@ -83,7 +85,6 @@ namespace NGramm
                 progressReporter.MoveProgress();
                 for (int i = 0; i < rawTextorg.Length; i++)
                 {
-
                     if (i >= progressMult * currentPr)
                     {
                         currentPr++;
@@ -93,68 +94,49 @@ namespace NGramm
                     char ch = rawTextorg[i];
 /*                    if (!char.IsControl(ch))
                     {*/
-                        bool added = false;
-                        if (char.IsLetter(ch))
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                            _uns.Append(ch);
-                            _ends.Append(ch);
-                            ignore_spaces = ignore_ends = ignore_nlines = false;
-                        }
-                        else if (char.IsDigit(ch))
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                            _uns.Append(ch);
-                            _ends.Append(ch);
-                            ignore_spaces = ignore_ends = ignore_nlines = false;
-                        }
-                        else if (!ignore_spaces && (spaces_list.Contains(ch) || ch == '\t'))
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                            _uns.Append(ch);
-                            _ends.Append(ch);
-                            ignore_spaces = true;
-                            ignore_ends = false;
-                        }
-                        else if ((ch == '\n') && !ignore_nlines)
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                            _uns.Append(ch);
-                            _ends.Append(ch);
-                            ignore_spaces = true;
-                            ignore_nlines = true;
-                            ignore_ends = false;
-                        }
-                        else if (ss.Contains(ch))
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                        }
-                        else if (ch == '-')
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                        }
-                        else if (!ignore_ends && IsEndSign(ch))
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                            _ends.Append(ch);
-                        }
-                        else if (!added)
-                        {
-                            _raw.Append(ch);
-                            added = true;
-                        }
-                   }
+                    bool added = false;
+                    if (char.IsLetter(ch) || char.IsDigit(ch))
+                    {
+                        _raw.Append(ch);
+                        _uns.Append(ch);
+                        _ends.Append(ch);
+                        ignore_spaces = ignore_ends = ignore_nlines = false;
+                    }
+                    else if (!ignore_spaces && (spaces_list.Contains(ch) || ch == '\t'))
+                    {
+                        _raw.Append(ch);
+                        _uns.Append(ch);
+                        _ends.Append(ch);
+                        ignore_spaces = true;
+                        ignore_ends = false;
+                    }
+                    else if ((ch == '\n') && !ignore_nlines)
+                    {
+                        _raw.Append(ch);
+                        _uns.Append(ch);
+                        _ends.Append(ch);
+                        ignore_spaces = true;
+                        ignore_nlines = true;
+                        ignore_ends = false;
+                    }
+                    else if (ss.Contains(ch) || ch == '-')
+                    {
+                        _raw.Append(ch);
+                    }
+                    else if (!ignore_ends && IsEndSign(ch))
+                    {
+                        _raw.Append(ch);
+                        _ends.Append(ch);
+                    }
+                    else
+                    {
+                        _raw.Append(ch);
+                    }
+                }
                 //}
 
-                rawTextorg = _raw.ToString();
-                endsignedTextorg = _ends.ToString();
+                rawTextorg = _raw.ToString(); // звичайний текст
+                endsignedTextorg = _ends.ToString(); // з крапками
                 unsignedTextorg = _uns.ToString();
                 _raw.Clear();
                 _ends.Clear();
@@ -427,9 +409,9 @@ namespace NGramm
             return res;
         }
 
-        public Task ProcessWordNGramms(int n) =>
-
-            Task.Run(() =>
+        public Task ProcessWordNGramms(int n) 
+        {
+            return Task.Run(() =>
             {
                 progressReporter.StartNewOperation($"Обчислення словесних н-грамм від 1 до {n}");
                 progressReporter.MoveProgress();
@@ -448,11 +430,12 @@ namespace NGramm
                 words_ngrams = new ConcurrentBag<NGrammContainer>(words_ngrams.OrderByDescending(w => w.n));
                 progressReporter.Finish();
             });
+        }
+        
+        public int GetWordsCount() => Words(ignore_punctuation ? unsignedTextorg : endsignedTextorg).Length;
+        public int GetCodeWordsCount() => Words(rawTextorg).Length;
 
-        public int GetWordsCount() =>
-            Words(ignore_punctuation ? unsignedTextorg : endsignedTextorg).Length;
-
-        private NGrammContainer ProcessWordNgrmmToContainer(string[] words, int n, bool skipss, bool ignoreCase, int progressMul = 0)
+        private NGrammContainer ProcessWordNgrmmToContainer(string[] words, int n, bool skipss, bool ignoreCase, int progressMul = 0, bool isCode = false)
         {
             var container = new NGrammContainer(n);
             bool breaked;
@@ -507,8 +490,12 @@ namespace NGramm
                     }
                     if (!breaked)
                     {
-
-                        var ngram = RemoveEndSigns(ngramBuilder.ToString());
+                        
+                        var ngram = ngramBuilder.ToString();
+                        if (!isCode)
+                        {
+                            ngram = RemoveEndSigns(ngram);
+                        }
                         ngramBuilder.Clear();
                         container.Add(ignoreCase ? ngram.ToLower() : ngram);
                     }
@@ -521,6 +508,40 @@ namespace NGramm
 
         #endregion
 
+        #region CodeWords ngrams
+        
+        public Task ProcessCodeWordNGramms(int n, SimpleLogger myLogger) 
+        {
+            return Task.Run(() =>
+            {
+                progressReporter.StartNewOperation($"Обчислення словесних н-грамм в коді від 1 до {n}");
+                progressReporter.MoveProgress();
+
+                var words = Words(rawTextorg);
+                myLogger.Print($"CodeWords. Found {words.Length} words in code");
+                foreach (var w in words)
+                {
+                    myLogger.Print($"CodeWords. Word {w}");
+                }
+                CountDesiredVariables = words.Length;
+                ClearAllNGrammContainers();
+                int progressMult = words.Length / 95;
+
+                Parallel.For(1, n + 1, PerformanceSettings.ParallelOpt, nn =>
+                {
+                    var ct = ProcessWordNgrmmToContainer(words, nn, false, false,  progressMult, true);
+                    code_words_ngrams.Add(ct);
+
+                    myLogger.Print($"CodeWords. Word {ct}");
+                });
+
+                code_words_ngrams = new ConcurrentBag<NGrammContainer>(code_words_ngrams.OrderByDescending(w => w.n));
+                progressReporter.Finish();
+            });
+        }
+
+        #endregion
+        
         private string RemoveEndSigns(string word)
         {
             return new string(word.Where(x => !IsEndSign(x) && (char.IsLetterOrDigit(x) || char.IsWhiteSpace(x))).ToArray());
@@ -531,6 +552,8 @@ namespace NGramm
         public IReadOnlyCollection<NGrammContainer> GetSymbolNgrams() => symbol_ngrams;
 
         public IReadOnlyCollection<NGrammContainer> GetWordsNgrams() => words_ngrams;
+        
+        public IReadOnlyCollection<NGrammContainer> GetCodeWordsNgrams() => code_words_ngrams;
 
         public static string[] Words(string inputText)
         {
@@ -542,12 +565,10 @@ namespace NGramm
             splitList.Add('\n');
             if (textContainSpaces) {
                 return text.Split(splitList.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            } else
-            {
-                return TrySplitWords(text);
             }
+            
+            return TrySplitWords(text);
         }
-
 
         public static string[] TrySplitWords(string inputText)
         {

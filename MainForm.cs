@@ -13,6 +13,8 @@ namespace NGramm
 {
     public partial class MainForm : Form
     {
+        private SimpleLogger _logger;
+        
         NgrammProcessor processor;
         string filename;
         NGrammContainer unified;
@@ -177,7 +179,8 @@ namespace NGramm
                 порахуватиToolStripMenuItem.Enabled = false;
             }
         }
-
+        
+        // кнопка Статистика/для1n-грам/показати_n_грами
         private void button2_Click(object sender, EventArgs e)
         {
             var n = int.Parse(SingleStatN.Text) - 1;
@@ -200,6 +203,13 @@ namespace NGramm
                 ListForm listForm = new ListForm(nGramListSettings);
                 listForm.Text = "N-грами " + SingleStatN.Text + " порядку";
                 listForm.ShowContent(Helpers.SortByVal(processor.GetWordsNgrams().ElementAt(n).GetNgrams(PerformanceSettings.MinNGrammCount)));
+                listForm.Show();
+            }
+            else if (IndexPorah == 3)
+            {
+                ListForm listForm = new ListForm(nGramListSettings);
+                listForm.Text = "N-грами " + SingleStatN.Text + " порядку";
+                listForm.ShowContent(Helpers.SortByVal(processor.GetCodeWordsNgrams().ElementAt(n).GetNgrams(PerformanceSettings.MinNGrammCount)));
                 listForm.Show();
             }
         }
@@ -480,6 +490,10 @@ namespace NGramm
                     wr.Close();
                 }
             }
+            else if (IndexPorah == 3)
+            {
+                // to do code words
+            }
         }
 
         private void button16_Click(object sender, EventArgs e)
@@ -519,7 +533,11 @@ namespace NGramm
                 }
                 unified = new NGrammContainer(conts);
             }
-
+            else if (IndexPorah == 3)
+            {
+                // to do code words
+            }
+            
             SaveMultStatsButton.Enabled = true;
             ShowMultStatButton.Enabled = true;
         }
@@ -765,6 +783,10 @@ namespace NGramm
                     wr.Close();
                 }
             }
+            else if (IndexPorah == 3)
+            {
+                // to do code words
+            }
         }
 
         private void EndSignsChanged(object sender, EventArgs e)
@@ -788,10 +810,12 @@ namespace NGramm
                 showSize();
             });
 
+            var nPoryadok = int.Parse(N.Text);
+            
             if (tabControl1.SelectedIndex == 0)
             {
                 NgrammProcessor.process_spaces = LiteralCountSpaces.Checked;
-                await processor.ProcessLiteralNGramms(int.Parse(N.Text));
+                await processor.ProcessLiteralNGramms(nPoryadok);
                 ngrams = processor.GetLiteralNgrams();
 
             }
@@ -800,14 +824,20 @@ namespace NGramm
                 NgrammProcessor.process_spaces = SymbolsCountSpaces.Checked;
                 NgrammProcessor.consequtive_spaces = consequtiveSpaces.Checked;
                 NgrammProcessor.show_NBS = ShowNPS.Checked;
-                await processor.ProcessSymbolNGramms(int.Parse(N.Text));
+                await processor.ProcessSymbolNGramms(nPoryadok);
                 ngrams = processor.GetSymbolNgrams();
             }
             else if (tabControl1.SelectedIndex == 2)
             {
                 NgrammProcessor.process_spaces = SymbolsCountSpaces.Checked;
-                await processor.ProcessWordNGramms(int.Parse(N.Text));
+                await processor.ProcessWordNGramms(nPoryadok);
                 ngrams = processor.GetWordsNgrams();
+            }
+            else if (tabControl1.SelectedIndex == 3)
+            {
+                _logger.Print($"Processing code words... {ngrams}");
+                await processor.ProcessCodeWordNGramms(nPoryadok, _logger);
+                ngrams = processor.GetCodeWordsNgrams();
             }
 
             listView1.Items.Clear();
@@ -860,6 +890,10 @@ namespace NGramm
                 statWindow.SetStats(stats, int.Parse(SingleStatN.Text) - 1);
                 statWindow.ShowDialog();
             }
+            else if (IndexPorah == 3)
+            {
+                // to do code words
+            }
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -900,13 +934,18 @@ namespace NGramm
                             size = processor.GetWordsCount();
                             break;
                         }
+                    case 3:
+                        {
+                            size = processor.GetCodeWordsCount();
+                            _logger.Print($"Processing code getSize... size={size}");
+                            break;
+                        }
                 }
 
                 return size;
             }
             return -1;
         }
-
 
         void showSize()
         {
@@ -957,6 +996,22 @@ namespace NGramm
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             nGramListSettings.SelectedTab = (Tabs)tabControl1.SelectedIndex;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            _logger = new SimpleLogger(debugTextBox, "debug_main.log");
+            _logger.Print("Запуск логера...");
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void debugTextBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -148,6 +148,7 @@
     <Compile Include="NgrammProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleLogger.cs" />
     <Compile Include="Statistics.cs" />
     <Compile Include="StatisticsWindow.cs">
       <SubType>Form</SubType>
