@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGramm", "NGramm.csproj", "{3D31DDF7-EC57-4788-A435-7EC93F5706A2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Debug|x64.ActiveCfg = Debug|x64
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Debug|x64.Build.0 = Debug|x64
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Release|x64.ActiveCfg = Release|x64
+		{3D31DDF7-EC57-4788-A435-7EC93F5706A2}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {87BC740D-A0C8-4DD5-8C3B-2DF8E6874622}
+	EndGlobalSection
+EndGlobal
