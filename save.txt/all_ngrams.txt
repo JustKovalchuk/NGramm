@@ -1,0 +1,2 @@
+N	Absolute count	Count
+1	67	218

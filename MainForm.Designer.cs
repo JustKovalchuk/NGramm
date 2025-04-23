@@ -86,11 +86,14 @@
             this.label4 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.debugTextBox = new System.Windows.Forms.TextBox();
+            this.checkBoxComments = new System.Windows.Forms.CheckBox();
+            this.checkBoxStrings = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -266,6 +269,8 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.checkBoxStrings);
+            this.tabPage4.Controls.Add(this.checkBoxComments);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
@@ -674,6 +679,32 @@
             this.debugTextBox.TabIndex = 16;
             this.debugTextBox.TextChanged += new System.EventHandler(this.debugTextBox_TextChanged);
             // 
+            // checkBoxComments
+            // 
+            this.checkBoxComments.AutoSize = true;
+            this.checkBoxComments.Checked = true;
+            this.checkBoxComments.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxComments.Location = new System.Drawing.Point(12, 8);
+            this.checkBoxComments.Name = "checkBoxComments";
+            this.checkBoxComments.Size = new System.Drawing.Size(128, 17);
+            this.checkBoxComments.TabIndex = 0;
+            this.checkBoxComments.Text = "Видалити коментарі";
+            this.checkBoxComments.UseVisualStyleBackColor = true;
+            this.checkBoxComments.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // checkBoxStrings
+            // 
+            this.checkBoxStrings.AutoSize = true;
+            this.checkBoxStrings.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.checkBoxStrings.Checked = true;
+            this.checkBoxStrings.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxStrings.Location = new System.Drawing.Point(12, 31);
+            this.checkBoxStrings.Name = "checkBoxStrings";
+            this.checkBoxStrings.Size = new System.Drawing.Size(151, 17);
+            this.checkBoxStrings.TabIndex = 1;
+            this.checkBoxStrings.Text = "Видалити текст у лапках";
+            this.checkBoxStrings.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -707,6 +738,8 @@
             this.tabPage3.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -788,6 +821,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox debugTextBox;
+        private System.Windows.Forms.CheckBox checkBoxStrings;
+        private System.Windows.Forms.CheckBox checkBoxComments;
     }
 }
 

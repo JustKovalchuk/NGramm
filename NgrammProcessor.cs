@@ -34,6 +34,9 @@ namespace NGramm
         public static bool show_NBS = true;
         public static bool ignore_case = true;
         public static bool ignore_punctuation = true;
+        
+        public static bool removeCodeComments = true;
+        public static bool removeCodeStrings = true;
 
         private static HashSet<char> spaces_list = new HashSet<char> { '\u0020', '\u00a0', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008', '\u2009', '\u200a', '\u202f', '\u205f', '\u3000', '\u200b' };
         private static char[] skip_spaces = new char[] { '\u3000' };
@@ -436,7 +439,7 @@ namespace NGramm
         }
         
         public int GetWordsCount() => Words(ignore_punctuation ? unsignedTextorg : endsignedTextorg).Length;
-        public int GetCodeWordsCount() => TokenizeCode(File.ReadAllText(_filename, fileEncoding)).ToArray().Length;
+        public int GetCodeWordsCount(bool removeComments, bool removeStrings) => TokenizeCode(File.ReadAllText(_filename, fileEncoding), removeComments, removeStrings).ToArray().Length;
 
         private NGrammContainer ProcessWordNgrmmToContainer(string[] words, int n, bool skipss, bool ignoreCase, int progressMul = 0, bool isCode = false)
         {
@@ -536,7 +539,7 @@ namespace NGramm
                 progressReporter.MoveProgress();
 
                 string codeSample = File.ReadAllText(_filename, fileEncoding);
-                var tokens = TokenizeCode(codeSample);
+                var tokens = TokenizeCode(codeSample, removeCodeComments, removeCodeStrings);
                 var words = tokens.ToArray();
                 CountDesiredVariables = words.Length;
                 ClearAllNGrammContainers();
@@ -557,7 +560,7 @@ namespace NGramm
 
         #region CodeWordsPreproces
         
-        public static string RemoveCommentsAndStrings(string code)
+        public static string RemoveCommentsAndStrings(string code, bool removeComments=true, bool removeStrings=true)
         {
             var result = new StringBuilder();
             int i = 0;
@@ -570,68 +573,74 @@ namespace NGramm
             {
                 char ch = code[i];
 
-                // If inside a string literal
-                if (inString != null)
+                if (removeStrings)
                 {
-                    if (escape)
+                    // If inside a string literal
+                    if (inString != null)
                     {
-                        escape = false;
-                        result.Append(""); // remove escaped char
-                    }
-                    else if (ch == '\\')
-                    {
-                        escape = true;
-                        result.Append(""); // remove backslash
-                    }
-                    else if (ch == inString)
-                    {
-                        result.Append(inString); // close quote
-                        inString = null;
-                    }
-                    else
-                    {
-                        result.Append(""); // remove inside string
-                    }
-                    i++;
-                    continue;
-                }
-
-                // Start of a string
-                if (ch == '"' || ch == '\'')
-                {
-                    inString = ch;
-                    result.Append(ch);
-                    i++;
-                    continue;
-                }
-
-                // Start of // comment
-                if (ch == '/' && i + 1 < n && code[i + 1] == '/')
-                {
-                    while (i < n && code[i] != '\n')
+                        if (escape)
+                        {
+                            escape = false;
+                            result.Append(""); // remove escaped char
+                        }
+                        else if (ch == '\\')
+                        {
+                            escape = true;
+                            result.Append(""); // remove backslash
+                        }
+                        else if (ch == inString)
+                        {
+                            result.Append(inString); // close quote
+                            inString = null;
+                        }
+                        else
+                        {
+                            result.Append(""); // remove inside string
+                        }
                         i++;
-                    result.Append(' ');
-                    continue;
+                        continue;
+                    }
+                
+                    // Start of a string
+                    if (ch == '"' || ch == '\'')
+                    {
+                        inString = ch;
+                        result.Append(ch);
+                        i++;
+                        continue;
+                    }
                 }
 
-                // Start of /* */ comment
-                if (ch == '/' && i + 1 < n && code[i + 1] == '*')
+                if (removeComments)
                 {
-                    i += 2;
-                    while (i + 1 < n && !(code[i] == '*' && code[i + 1] == '/'))
-                        i++;
-                    i += 2; // skip '*/'
-                    result.Append(' ');
-                    continue;
-                }
+                    // Start of // comment
+                    if (ch == '/' && i + 1 < n && code[i + 1] == '/')
+                    {
+                        while (i < n && code[i] != '\n')
+                            i++;
+                        result.Append(' ');
+                        continue;
+                    }
 
-                // Start of # comment
-                if (ch == '#')
-                {
-                    while (i < n && code[i] != '\n')
-                        i++;
-                    result.Append(' ');
-                    continue;
+                    // Start of /* */ comment
+                    if (ch == '/' && i + 1 < n && code[i + 1] == '*')
+                    {
+                        i += 2;
+                        while (i + 1 < n && !(code[i] == '*' && code[i + 1] == '/'))
+                            i++;
+                        i += 2; // skip '*/'
+                        result.Append(' ');
+                        continue;
+                    }
+
+                    // Start of # comment
+                    if (ch == '#')
+                    {
+                        while (i < n && code[i] != '\n')
+                            i++;
+                        result.Append(' ');
+                        continue;
+                    }
                 }
 
                 // Newlines -> space
@@ -669,10 +678,10 @@ namespace NGramm
             return code;
         }
         
-        public static List<string> TokenizeCode(string code)
+        public static List<string> TokenizeCode(string code, bool removeComments=true, bool removeStrings=true)
         {
             code = code.Replace("\t", " ");
-            code = RemoveCommentsAndStrings(code); // reuse earlier C# version
+            code = RemoveCommentsAndStrings(code, removeComments, removeStrings); // reuse earlier C# version
             var result = new List<string>();
             int i = 0;
             int n = code.Length;
@@ -882,7 +891,7 @@ namespace NGramm
         public string[] CodeWords()
         {
             string codeSample = File.ReadAllText(_filename, fileEncoding);
-            var tokens = TokenizeCode(codeSample);
+            var tokens = TokenizeCode(codeSample, removeCodeComments, removeCodeStrings);
             var words = tokens.ToArray();
             return words;
         }

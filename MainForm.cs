@@ -23,6 +23,9 @@ namespace NGramm
         readonly Stopwatch stopwatch = new Stopwatch();
         readonly Action<SendOrPostCallback, object> SyncContext;
 
+        private bool removeComments;
+        private bool removeStrings;
+
         private readonly NGramListSettings nGramListSettings = new NGramListSettings();
 
         public MainForm()
@@ -927,6 +930,8 @@ namespace NGramm
             }
             else if (tabControl1.SelectedIndex == 3)
             {
+                NgrammProcessor.removeCodeComments = checkBoxComments.Checked;
+                NgrammProcessor.removeCodeStrings = checkBoxStrings.Checked;
                 _logger.Print($"Processing code words... {ngrams}");
                 await processor.ProcessCodeWordNGramms(nPoryadok, _logger);
                 ngrams = processor.GetCodeWordsNgrams();
@@ -1031,7 +1036,7 @@ namespace NGramm
                         }
                     case 3:
                         {
-                            size = processor.GetCodeWordsCount();
+                            size = processor.GetCodeWordsCount(checkBoxComments.Checked, checkBoxStrings.Checked);
                             _logger.Print($"Processing code getSize... size={size}");
                             break;
                         }
@@ -1105,6 +1110,11 @@ namespace NGramm
         }
 
         private void debugTextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
 
         }

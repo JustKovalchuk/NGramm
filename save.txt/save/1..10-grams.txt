@@ -1,0 +1,940 @@
+Word Ngram Statistic for 1..10-grams
+
+
+RANK	NGramm	F
+1	;	17
+2	.	15
+3	()	13
+4	==	12
+5	{}	7
+6	bom	7
+7	&&	7
+8	return	7
+9	[]	6
+10	Encoding	6
+11	byte	6
+12	=	6
+13	return Encoding	5
+14	Encoding .	5
+15	return Encoding .	5
+16	if ()	5
+17	using	5
+18	if	5
+19	b0	5
+20	b1	5
+21	ch	5
+22	b1 ==	4
+23	() b0	4
+24	&& b1 ==	4
+25	&& b1	4
+26	= bom	4
+27	bom []	4
+28	using System	4
+29	if () b0 ==	4
+30	b0 ==	4
+31	,	4
+32	char	4
+33	if () b0	4
+34	public	4
+35	= bom []	4
+36	() b0 ==	4
+37	System	4
+38	else if () b0	3
+39	b2	3
+40	else if () b0 ==	3
+41	4	3
+42	0xff	3
+43	0xfe	3
+44	else	3
+45	public static	3
+46	else if	3
+47	else if ()	3
+48	using System .	3
+49	static	3
+50	== 0xfe	3
+51	== 0xff	3
+52	System .	3
+53	{} byte	2
+54	= new	2
+55	== 0x00	2
+56	&& b2	2
+57	4 ;	2
+58	ch ;	2
+59	byte []	2
+60	b2 ==	2
+61	0x00 &&	2
+62	public static bool	2
+63	== 0x00 &&	2
+64	== 0xff return	2
+65	() char ch {} return	2
+66	0xff return Encoding	2
+67	== 0xfe &&	2
+68	char ch {}	2
+69	ch {} return	2
+70	() char ch	2
+71	() ch ;	2
+72	&& b2 ==	2
+73	== 0xff return Encoding .	2
+74	static bool	2
+75	0xfe &&	2
+76	ch {}	2
+77	char .	2
+78	char ch	2
+79	() char	2
+80	{} return	2
+81	UTF8 ;	2
+82	{} public	2
+83	0xff return	2
+84	() bom	2
+85	bool	2
+86	reader	2
+87	filename	2
+88	IsDigit	2
+89	== 0xff return Encoding	2
+90	0xff return Encoding .	2
+91	char ch {} return	2
+92	() char ch {}	2
+93	Read	2
+94	() ch	2
+95	IsDigit ()	2
+96	new	2
+97	b3	2
+98	0x00	2
+99	UTF8	2
+100	0	2
+101	0xbb && b2 == 0xbf return Encoding	1
+102	else if () b0 == 0xff &&	1
+103	&& b2 == 0xbf return Encoding .	1
+104	() var reader = new FileStream	1
+105	FileStream () filename , FileMode .	1
+106	reader = new FileStream () filename	1
+107	var reader = new FileStream ()	1
+108	b1 == 0xbb && b2 == 0xbf	1
+109	b0 == 0xff && b1 == 0xfe	1
+110	() b0 == 0xff && b1 ==	1
+111	byte b2 = bom [] 2 ;	1
+112	byte b1 = bom [] 1 ;	1
+113	byte b3 = bom [] 3 ;	1
+114	if () b0 == 0xff && b1	1
+115	== 0xbb && b2 == 0xbf return	1
+116	0xff && b1 == 0xfe return Encoding	1
+117	== 0xff && b1 == 0xfe return	1
+118	&& b1 == 0xfe return Encoding .	1
+119	new FileStream () filename , FileMode	1
+120	{} byte [] bom = new byte	1
+121	byte [] bom = new byte []	1
+122	>= 4 {} byte b0 =	1
+123	{} byte b0 = bom []	1
+124	4 {} byte b0 = bom	1
+125	[] bom = new byte [] 4	1
+126	Length >= 4 {} byte b0 =	1
+127	new FileStream () filename , FileMode .	1
+128	Read {} byte [] bom = new	1
+129	= new FileStream () filename , FileMode	1
+130	() bom , 0 , 4	1
+131	GetEncoding () string filename {} using	1
+132	using () var reader = new	1
+133	() string filename {} using ()	1
+134	= new FileStream () filename ,	1
+135	string filename {} using () var	1
+136	Length >= 4 {} byte b0	1
+137	bom , 0 , 4 ;	1
+138	Read {} byte [] bom =	1
+139	{} using () var reader =	1
+140	filename {} using () var reader	1
+141	public static bool IsVariableChar () char ch	1
+142	char ch {} return ch == ''	1
+143	() char ch {} return ch ==	1
+144	IsVariableChar () char ch {} return ch	1
+145	static bool IsVariableChar () char ch {}	1
+146	{} public static bool IsVariableChar () char	1
+147	ch {} return ch == '' ||	1
+148	else if () b0 == 0x00 &&	1
+149	&& b1 == 0xff return Encoding .	1
+150	if () b0 == 0x00 && b1	1
+151	return ch == '' || char .	1
+152	{} return ch == '' || char	1
+153	4 {} byte b0 = bom []	1
+154	IsDigit () char ch {} return char	1
+155	static bool IsDigit () char ch {}	1
+156	bool IsDigit () char ch {} return	1
+157	public static bool IsDigit () char ch	1
+158	() char ch {} return char .	1
+159	public static Encoding GetEncoding () string filename	1
+160	public class Utils {} public static bool	1
+161	NGramm {} public class Utils {} public	1
+162	Utils {} public static bool IsVariableChar ()	1
+163	bool IsVariableChar () char ch {} return	1
+164	class Utils {} public static bool IsVariableChar	1
+165	{} public class Utils {} public static	1
+166	namespace NGramm {} public class Utils {}	1
+167	b0 == 0x00 && b1 == 0x00	1
+168	== 0x00 && b2 == 0xfe &&	1
+169	b1 == 0x00 && b2 == 0xfe	1
+170	b0 == 0xef && b1 == 0xbb	1
+171	0x00 && b1 == 0x00 && b2	1
+172	== 0x00 && b1 == 0x00 &&	1
+173	&& b1 == 0x00 && b2 ==	1
+174	() b0 == 0xef && b1 ==	1
+175	if () b0 == 0xef && b1	1
+176	byte b0 = bom [] 0 ;	1
+177	{} byte b0 = bom [] 0	1
+178	== 0xef && b1 == 0xbb &&	1
+179	&& b1 == 0xbb && b2 ==	1
+180	0xef && b1 == 0xbb && b2	1
+181	else if () b0 == 0xfe &&	1
+182	() b0 == 0xfe && b1 ==	1
+183	== 0xfe && b1 == 0xff return	1
+184	() b0 == 0x00 && b1 ==	1
+185	0xfe && b1 == 0xff return Encoding	1
+186	if () b0 == 0xfe && b1	1
+187	b0 == 0xfe && b1 == 0xff	1
+188	&& b3 == 0xff return Encoding .	1
+189	0xfe && b3 == 0xff return Encoding	1
+190	0x00 && b2 == 0xfe && b3	1
+191	b2 == 0xfe && b3 == 0xff	1
+192	&& b2 == 0xfe && b3 ==	1
+193	== 0xfe && b3 == 0xff return	1
+194	else if () b0 == 0xff	1
+195	0xff && b1 == 0xfe return	1
+196	== 0xff && b1 == 0xfe	1
+197	0xef && b1 == 0xbb &&	1
+198	() b0 == 0xff && b1	1
+199	if () b0 == 0xff &&	1
+200	b0 == 0xff && b1 ==	1
+201	b2 == 0xbf return Encoding .	1
+202	&& b2 == 0xbf return Encoding	1
+203	0xbb && b2 == 0xbf return	1
+204	== 0xbb && b2 == 0xbf	1
+205	b1 == 0xbb && b2 ==	1
+206	&& b1 == 0xbb && b2	1
+207	b1 = bom [] 1 ;	1
+208	b3 = bom [] 3 ;	1
+209	byte b3 = bom [] 3	1
+210	== 0xef && b1 == 0xbb	1
+211	b1 == 0x00 && b2 ==	1
+212	&& b1 == 0xfe return Encoding	1
+213	if () b0 == 0xef &&	1
+214	b0 == 0xef && b1 ==	1
+215	byte b0 = bom [] 0	1
+216	b2 = bom [] 2 ;	1
+217	byte b2 = bom [] 2	1
+218	() b0 == 0xef && b1	1
+219	byte b1 = bom [] 1	1
+220	b0 = bom [] 0 ;	1
+221	FileStream () filename , FileMode	1
+222	{} byte b0 = bom	1
+223	4 {} byte b0 =	1
+224	bom , 0 , 4	1
+225	Length >= 4 {} byte	1
+226	, 0 , 4 ;	1
+227	byte b0 = bom []	1
+228	= new byte [] 4	1
+229	Read () bom , 0	1
+230	new byte [] 4 ;	1
+231	() string filename {} using	1
+232	bom = new byte []	1
+233	[] bom = new byte	1
+234	() bom , 0 ,	1
+235	>= 4 {} byte b0	1
+236	Read {} byte [] bom	1
+237	() filename , FileMode .	1
+238	reader = new FileStream ()	1
+239	new FileStream () filename ,	1
+240	= new FileStream () filename	1
+241	{} byte [] bom =	1
+242	{} using () var reader	1
+243	() var reader = new	1
+244	using () var reader =	1
+245	byte [] bom = new	1
+246	filename {} using () var	1
+247	string filename {} using ()	1
+248	var reader = new FileStream	1
+249	== 0x00 && b2 == 0xfe	1
+250	class Utils {} public static bool	1
+251	public class Utils {} public static	1
+252	char ch {} return ch ==	1
+253	NGramm {} public class Utils {}	1
+254	namespace NGramm {} public class Utils	1
+255	Utils {} public static bool IsVariableChar	1
+256	() char ch {} return char	1
+257	public static Encoding GetEncoding () string	1
+258	char ch {} return char .	1
+259	return ch == '' || char	1
+260	IsDigit () char ch {} return	1
+261	bool IsDigit () char ch {}	1
+262	static Encoding GetEncoding () string filename	1
+263	{} public class Utils {} public	1
+264	Read () bom , 0 ,	1
+265	= new byte [] 4 ;	1
+266	bom = new byte [] 4	1
+267	[] bom = new byte []	1
+268	byte [] bom = new byte	1
+269	{} byte [] bom = new	1
+270	Encoding GetEncoding () string filename {}	1
+271	() char ch {} return ch	1
+272	IsVariableChar () char ch {} return	1
+273	bool IsVariableChar () char ch {}	1
+274	static bool IsVariableChar () char ch	1
+275	public static bool IsVariableChar () char	1
+276	{} public static bool IsVariableChar ()	1
+277	{} return ch == '' ||	1
+278	== 0xfe && b3 == 0xff	1
+279	b2 == 0xfe && b3 ==	1
+280	&& b2 == 0xfe && b3	1
+281	b0 == 0xfe && b1 ==	1
+282	() b0 == 0xfe && b1	1
+283	b0 == 0x00 && b1 ==	1
+284	b3 == 0xff return Encoding .	1
+285	0x00 && b1 == 0x00 &&	1
+286	== 0x00 && b1 == 0x00	1
+287	0x00 && b2 == 0xfe &&	1
+288	&& b3 == 0xff return Encoding	1
+289	0xfe && b3 == 0xff return	1
+290	&& b1 == 0x00 && b2	1
+291	== 0xfe && b1 == 0xff	1
+292	ch == '' || char .	1
+293	b1 == 0xff return Encoding .	1
+294	&& b1 == 0xff return Encoding	1
+295	ch {} return ch == ''	1
+296	static bool IsDigit () char ch	1
+297	public static bool IsDigit () char	1
+298	0xfe && b1 == 0xff return	1
+299	if () b0 == 0xfe &&	1
+300	else if () b0 == 0xfe	1
+301	b1 == 0xfe return Encoding .	1
+302	() b0 == 0x00 && b1	1
+303	if () b0 == 0x00 &&	1
+304	else if () b0 == 0x00	1
+305	>= 4 {} byte b0 = bom	1
+306	() var reader = new FileStream () filename ,	1
+307	using () var reader = new FileStream () filename	1
+308	reader = new FileStream () filename , FileMode .	1
+309	Read {} byte [] bom = new byte []	1
+310	Length >= 4 {} byte b0 = bom []	1
+311	byte [] bom = new byte [] 4 ;	1
+312	var reader = new FileStream () filename , FileMode	1
+313	public static bool IsVariableChar () char ch {} return	1
+314	{} public static bool IsVariableChar () char ch {}	1
+315	NGramm {} public class Utils {} public static bool	1
+316	bool IsDigit () char ch {} return char .	1
+317	Utils {} public static bool IsVariableChar () char ch	1
+318	class Utils {} public static bool IsVariableChar () char	1
+319	if () b0 == 0xff && b1 == 0xfe return	1
+320	string filename {} using () var reader = new	1
+321	() string filename {} using () var reader =	1
+322	() b0 == 0xff && b1 == 0xfe return Encoding	1
+323	b1 == 0xbb && b2 == 0xbf return Encoding .	1
+324	else if () b0 == 0xff && b1 == 0xfe	1
+325	{} using () var reader = new FileStream ()	1
+326	GetEncoding () string filename {} using () var reader	1
+327	Encoding GetEncoding () string filename {} using () var	1
+328	{} byte [] bom = new byte [] 4	1
+329	filename {} using () var reader = new FileStream	1
+330	static Encoding GetEncoding () string filename {} using ()	1
+331	public static Encoding GetEncoding () string filename {} using	1
+332	namespace NGramm {} public class Utils {} public static	1
+333	else if () b0 == 0x00 && b1 ==	1
+334	== 0xfe && b1 == 0xff return Encoding .	1
+335	&& b2 == 0xfe && b3 == 0xff return	1
+336	b0 == 0x00 && b1 == 0x00 && b2	1
+337	b0 == 0xfe && b1 == 0xff return Encoding	1
+338	() b0 == 0xfe && b1 == 0xff return	1
+339	0x00 && b2 == 0xfe && b3 == 0xff	1
+340	0x00 && b1 == 0x00 && b2 == 0xfe	1
+341	== 0x00 && b2 == 0xfe && b3 ==	1
+342	b1 == 0x00 && b2 == 0xfe && b3	1
+343	== 0xfe && b3 == 0xff return Encoding .	1
+344	b2 == 0xfe && b3 == 0xff return Encoding	1
+345	&& b1 == 0x00 && b2 == 0xfe &&	1
+346	char ch {} return ch == '' || char	1
+347	static bool IsDigit () char ch {} return char	1
+348	public static bool IsDigit () char ch {} return	1
+349	public class Utils {} public static bool IsVariableChar ()	1
+350	{} public class Utils {} public static bool IsVariableChar	1
+351	ch {} return ch == '' || char .	1
+352	bool IsVariableChar () char ch {} return ch ==	1
+353	() b0 == 0x00 && b1 == 0x00 &&	1
+354	if () b0 == 0x00 && b1 == 0x00	1
+355	== 0x00 && b1 == 0x00 && b2 ==	1
+356	static bool IsVariableChar () char ch {} return ch	1
+357	() char ch {} return ch == '' ||	1
+358	IsVariableChar () char ch {} return ch == ''	1
+359	{} public static bool IsVariableChar () char ch {} return	1
+360	public class Utils {} public static bool IsVariableChar () char	1
+361	namespace NGramm {} public class Utils {} public static bool	1
+362	using () var reader = new FileStream () filename ,	1
+363	class Utils {} public static bool IsVariableChar () char ch	1
+364	Utils {} public static bool IsVariableChar () char ch {}	1
+365	NGramm {} public class Utils {} public static bool IsVariableChar	1
+366	public static bool IsDigit () char ch {} return char	1
+367	IsVariableChar () char ch {} return ch == '' ||	1
+368	public static bool IsVariableChar () char ch {} return ch	1
+369	{} public class Utils {} public static bool IsVariableChar ()	1
+370	() char ch {} return ch == '' || char	1
+371	char ch {} return ch == '' || char .	1
+372	Encoding GetEncoding () string filename {} using () var reader	1
+373	static bool IsDigit () char ch {} return char .	1
+374	public static Encoding GetEncoding () string filename {} using ()	1
+375	GetEncoding () string filename {} using () var reader =	1
+376	() string filename {} using () var reader = new	1
+377	string filename {} using () var reader = new FileStream	1
+378	static Encoding GetEncoding () string filename {} using () var	1
+379	() var reader = new FileStream () filename , FileMode	1
+380	filename {} using () var reader = new FileStream ()	1
+381	{} using () var reader = new FileStream () filename	1
+382	var reader = new FileStream () filename , FileMode .	1
+383	Read {} byte [] bom = new byte [] 4	1
+384	{} byte [] bom = new byte [] 4 ;	1
+385	static bool IsVariableChar () char ch {} return ch ==	1
+386	== 0xef && b1 == 0xbb && b2 == 0xbf	1
+387	0xef && b1 == 0xbb && b2 == 0xbf return	1
+388	&& b1 == 0xbb && b2 == 0xbf return Encoding	1
+389	0x00 && b1 == 0x00 && b2 == 0xfe &&	1
+390	&& b1 == 0x00 && b2 == 0xfe && b3	1
+391	b1 == 0x00 && b2 == 0xfe && b3 ==	1
+392	b0 == 0xef && b1 == 0xbb && b2 ==	1
+393	b0 == 0xff && b1 == 0xfe return Encoding .	1
+394	else if () b0 == 0xfe && b1 == 0xff	1
+395	if () b0 == 0xfe && b1 == 0xff return	1
+396	>= 4 {} byte b0 = bom [] 0 ;	1
+397	if () b0 == 0xef && b1 == 0xbb &&	1
+398	() b0 == 0xef && b1 == 0xbb && b2	1
+399	b0 == 0x00 && b1 == 0x00 && b2 ==	1
+400	== 0x00 && b1 == 0x00 && b2 == 0xfe	1
+401	if () b0 == 0x00 && b1 == 0x00 &&	1
+402	bool IsVariableChar () char ch {} return ch == ''	1
+403	Length >= 4 {} byte b0 = bom [] 0	1
+404	() b0 == 0x00 && b1 == 0x00 && b2	1
+405	() b0 == 0xfe && b1 == 0xff return Encoding	1
+406	&& b2 == 0xfe && b3 == 0xff return Encoding	1
+407	b2 == 0xfe && b3 == 0xff return Encoding .	1
+408	== 0x00 && b2 == 0xfe && b3 == 0xff	1
+409	b0 == 0xfe && b1 == 0xff return Encoding .	1
+410	else if () b0 == 0x00 && b1 == 0x00	1
+411	0x00 && b2 == 0xfe && b3 == 0xff return	1
+412	if () b0 == 0xfe && b1 == 0xff	1
+413	&& b1 == 0x00 && b2 == 0xfe	1
+414	0x00 && b1 == 0x00 && b2 ==	1
+415	== 0x00 && b2 == 0xfe && b3	1
+416	0xfe && b3 == 0xff return Encoding .	1
+417	== 0xfe && b3 == 0xff return Encoding	1
+418	0x00 && b2 == 0xfe && b3 ==	1
+419	b1 == 0x00 && b2 == 0xfe &&	1
+420	0xef && b1 == 0xbb && b2 ==	1
+421	() b0 == 0xef && b1 == 0xbb	1
+422	4 {} byte b0 = bom [] 0	1
+423	== 0xef && b1 == 0xbb && b2	1
+424	b0 == 0xef && b1 == 0xbb &&	1
+425	&& b1 == 0xbb && b2 == 0xbf	1
+426	b0 == 0x00 && b1 == 0x00 &&	1
+427	() b0 == 0x00 && b1 == 0x00	1
+428	0xfe && b1 == 0xff return Encoding .	1
+429	char ch {} return ch == '' ||	1
+430	if () b0 == 0x00 && b1 ==	1
+431	else if () b0 == 0x00 && b1	1
+432	() b0 == 0xfe && b1 == 0xff	1
+433	== 0x00 && b1 == 0x00 && b2	1
+434	b2 == 0xfe && b3 == 0xff return	1
+435	&& b2 == 0xfe && b3 == 0xff	1
+436	if () b0 == 0xfe && b1 ==	1
+437	== 0xfe && b1 == 0xff return Encoding	1
+438	b0 == 0xfe && b1 == 0xff return	1
+439	>= 4 {} byte b0 = bom []	1
+440	var reader = new FileStream () filename	1
+441	filename {} using () var reader =	1
+442	Encoding GetEncoding () string filename {} using	1
+443	{} using () var reader = new	1
+444	() var reader = new FileStream ()	1
+445	reader = new FileStream () filename ,	1
+446	static Encoding GetEncoding () string filename {}	1
+447	Read () bom , 0 , 4	1
+448	bom = new byte [] 4 ;	1
+449	() bom , 0 , 4 ;	1
+450	GetEncoding () string filename {} using ()	1
+451	string filename {} using () var reader	1
+452	() string filename {} using () var	1
+453	== 0xff && b1 == 0xfe return Encoding	1
+454	b0 == 0xff && b1 == 0xfe return	1
+455	else if () b0 == 0xfe && b1	1
+456	if () b0 == 0xef && b1 ==	1
+457	{} byte b0 = bom [] 0 ;	1
+458	b1 == 0xbb && b2 == 0xbf return	1
+459	0xff && b1 == 0xfe return Encoding .	1
+460	if () b0 == 0xff && b1 ==	1
+461	else if () b0 == 0xff && b1	1
+462	using () var reader = new FileStream	1
+463	() b0 == 0xff && b1 == 0xfe	1
+464	0xbb && b2 == 0xbf return Encoding .	1
+465	== 0xbb && b2 == 0xbf return Encoding	1
+466	filename {} using () var reader = new	1
+467	string filename {} using () var reader =	1
+468	using () var reader = new FileStream ()	1
+469	b1 == 0xbb && b2 == 0xbf return Encoding	1
+470	if () b0 == 0xff && b1 == 0xfe	1
+471	else if () b0 == 0xff && b1 ==	1
+472	{} using () var reader = new FileStream	1
+473	GetEncoding () string filename {} using () var	1
+474	Encoding GetEncoding () string filename {} using ()	1
+475	() var reader = new FileStream () filename	1
+476	() string filename {} using () var reader	1
+477	static Encoding GetEncoding () string filename {} using	1
+478	public static Encoding GetEncoding () string filename {}	1
+479	0xef && b1 == 0xbb && b2 == 0xbf	1
+480	4 {} byte b0 = bom [] 0 ;	1
+481	>= 4 {} byte b0 = bom [] 0	1
+482	== 0xef && b1 == 0xbb && b2 ==	1
+483	b0 == 0xef && b1 == 0xbb && b2	1
+484	&& b1 == 0xbb && b2 == 0xbf return	1
+485	() b0 == 0xef && b1 == 0xbb &&	1
+486	else if () b0 == 0xfe && b1 ==	1
+487	== 0xff && b1 == 0xfe return Encoding .	1
+488	== 0xbb && b2 == 0xbf return Encoding .	1
+489	if () b0 == 0xef && b1 == 0xbb	1
+490	b0 == 0xff && b1 == 0xfe return Encoding	1
+491	() b0 == 0xff && b1 == 0xfe return	1
+492	[] bom = new byte [] 4 ;	1
+493	{} public class Utils {} public static bool	1
+494	bool IsVariableChar () char ch {} return ch	1
+495	static bool IsDigit () char ch {} return	1
+496	NGramm {} public class Utils {} public static	1
+497	namespace NGramm {} public class Utils {} public	1
+498	public class Utils {} public static bool IsVariableChar	1
+499	public static bool IsDigit () char ch {}	1
+500	() char ch {} return ch == ''	1
+501	IsVariableChar () char ch {} return ch ==	1
+502	ch {} return ch == '' || char	1
+503	IsDigit () char ch {} return char .	1
+504	bool IsDigit () char ch {} return char	1
+505	{} return ch == '' || char .	1
+506	{} byte [] bom = new byte []	1
+507	reader = new FileStream () filename , FileMode	1
+508	var reader = new FileStream () filename ,	1
+509	byte [] bom = new byte [] 4	1
+510	Length >= 4 {} byte b0 = bom	1
+511	Read () bom , 0 , 4 ;	1
+512	Read {} byte [] bom = new byte	1
+513	static bool IsVariableChar () char ch {} return	1
+514	public static bool IsVariableChar () char ch {}	1
+515	class Utils {} public static bool IsVariableChar ()	1
+516	= new FileStream () filename , FileMode .	1
+517	{} public static bool IsVariableChar () char ch	1
+518	Utils {} public static bool IsVariableChar () char	1
+519	b1 == 0xfe	1
+520	0xff && b1	1
+521	== 0xff &&	1
+522	b0 == 0xff	1
+523	0x00 && b1	1
+524	b1 == 0x00	1
+525	b3 == 0xff	1
+526	[] 0 ;	1
+527	bom [] 0	1
+528	Length >= 4	1
+529	b0 = bom	1
+530	byte b0 =	1
+531	byte b1 =	1
+532	0xfe && b3	1
+533	b1 == 0xbb	1
+534	b2 == 0xfe	1
+535	b2 == 0xbf	1
+536	== 0xef &&	1
+537	b0 == 0xef	1
+538	0xef && b1	1
+539	b0 == 0x00	1
+540	b1 == 0xff	1
+541	0xfe && b1	1
+542	b0 == 0xfe	1
+543	0xfe return Encoding	1
+544	== 0xfe return	1
+545	byte b2 =	1
+546	filename ,	1
+547	() filename	1
+548	bom [] 1	1
+549	b1 = bom	1
+550	b2 = bom	1
+551	FileStream ()	1
+552	() var	1
+553	using ()	1
+554	{} using	1
+555	Open ,	1
+556	FileMode .	1
+557	, FileMode	1
+558	4 {} byte	1
+559	>= 4 {}	1
+560	b3 = bom	1
+561	() bom .	1
+562	if () bom	1
+563	{} byte b0	1
+564	byte b3 =	1
+565	bom [] 3	1
+566	bom [] 2	1
+567	[] 1 ;	1
+568	[] 2 ;	1
+569	&& b3 ==	1
+570	[] 3 ;	1
+571	= new byte	1
+572	string filename {}	1
+573	bool IsVariableChar ()	1
+574	bom = new	1
+575	byte [] 4	1
+576	new byte []	1
+577	static bool IsVariableChar	1
+578	return ch ==	1
+579	{} return ch	1
+580	NGramm {} public	1
+581	{} public static	1
+582	IsVariableChar () char	1
+583	ch == ''	1
+584	() bom ,	1
+585	Read () bom	1
+586	[] 4 ;	1
+587	reader = new	1
+588	var reader =	1
+589	Read {} byte	1
+590	bom , 0	1
+591	[] bom =	1
+592	byte [] bom	1
+593	{} byte []	1
+594	, 4 ;	1
+595	0 , 4	1
+596	, 0 ,	1
+597	'' || char	1
+598	static bool IsDigit	1
+599	{} return char	1
+600	Encoding GetEncoding ()	1
+601	IsLetterOrDigit () ch	1
+602	|| char .	1
+603	IsDigit () char	1
+604	== 0xbb &&	1
+605	0xbf return Encoding	1
+606	== 0xbf return	1
+607	bool IsDigit ()	1
+608	0x00 && b2	1
+609	0xbb && b2	1
+610	Utils {} public	1
+611	class Utils {}	1
+612	public class Utils	1
+613	namespace NGramm {}	1
+614	using System ;	1
+615	{} public class	1
+616	== '' ||	1
+617	static Encoding GetEncoding	1
+618	() string filename	1
+619	GetEncoding () string	1
+620	public static Encoding	1
+621	IsDigit () ch	1
+622	return char .	1
+623	new FileStream	1
+624	[] 1	1
+625	b1 =	1
+626	byte b2	1
+627	b0 =	1
+628	>= 4	1
+629	byte b0	1
+630	1 ;	1
+631	''	1
+632	||	1
+633	>=	1
+634	byte b1	1
+635	4 {}	1
+636	Length	1
+637	b3 ==	1
+638	== 0xbf	1
+639	0xbb &&	1
+640	Unicode ;	1
+641	&& b3	1
+642	UTF32 ;	1
+643	0xbf return	1
+644	0 ;	1
+645	bom .	1
+646	Length >=	1
+647	0xfe return	1
+648	0xff &&	1
+649	[] 0	1
+650	UTF32	1
+651	Unicode	1
+652	BigEndianUnicode	1
+653	namespace	1
+654	Generic	1
+655	IO	1
+656	3	1
+657	0xbb	1
+658	0xbf	1
+659	NGramm	1
+660	class	1
+661	2	1
+662	0xef	1
+663	IsLetterOrDigit	1
+664	FileAccess	1
+665	Open	1
+666	Utils	1
+667	1	1
+668	IsVariableChar	1
+669	FileMode	1
+670	string	1
+671	Collections	1
+672	Text	1
+673	var	1
+674	FileStream	1
+675	GetEncoding	1
+676	class Utils	1
+677	public class	1
+678	NGramm {}	1
+679	new byte	1
+680	bom =	1
+681	filename {}	1
+682	IsVariableChar ()	1
+683	IO ;	1
+684	System ;	1
+685	namespace NGramm	1
+686	bool IsVariableChar	1
+687	Utils {}	1
+688	Text ;	1
+689	bom ,	1
+690	Read ()	1
+691	reader .	1
+692	reader =	1
+693	var reader	1
+694	, FileAccess	1
+695	, 4	1
+696	Read {}	1
+697	FileAccess .	1
+698	[] 4	1
+699	0 ,	1
+700	, 0	1
+701	[] bom	1
+702	[] 3	1
+703	== 0xef	1
+704	== 0xbb	1
+705	IsLetterOrDigit ()	1
+706	|| char	1
+707	3 ;	1
+708	0xef &&	1
+709	b3 =	1
+710	byte b3	1
+711	BigEndianUnicode ;	1
+712	[] 2	1
+713	b2 =	1
+714	2 ;	1
+715	Encoding GetEncoding	1
+716	static Encoding	1
+717	return char	1
+718	Generic ;	1
+719	Collections .	1
+720	return ch	1
+721	string filename	1
+722	== ''	1
+723	ch ==	1
+724	bool IsDigit	1
+725	() string	1
+726	GetEncoding ()	1
+727	'' ||	1
+728	b2 == 0xbf return Encoding	1
+729	&& b2 == 0xbf return	1
+730	0xbb && b2 == 0xbf	1
+731	b2 = bom [] 2	1
+732	byte b2 = bom []	1
+733	= bom [] 1 ;	1
+734	== 0xbf return Encoding .	1
+735	0xef && b1 == 0xbb	1
+736	== 0xef && b1 ==	1
+737	&& b1 == 0xbb &&	1
+738	b0 == 0xff && b1	1
+739	() b0 == 0xff &&	1
+740	if () b0 == 0xff	1
+741	byte b3 = bom []	1
+742	= bom [] 2 ;	1
+743	= bom [] 3 ;	1
+744	b1 == 0x00 && b2	1
+745	&& b1 == 0x00 &&	1
+746	b3 = bom [] 3	1
+747	b0 == 0xef && b1	1
+748	= bom [] 0 ;	1
+749	b0 = bom [] 0	1
+750	b1 = bom [] 1	1
+751	() b0 == 0xef &&	1
+752	if () b0 == 0xef	1
+753	byte b1 = bom []	1
+754	() var reader =	1
+755	0 , 4 ;	1
+756	, 0 , 4	1
+757	using () var reader	1
+758	reader = new FileStream	1
+759	var reader = new	1
+760	bom , 0 ,	1
+761	Length >= 4 {}	1
+762	() bom , 0	1
+763	bom = new byte	1
+764	if () bom .	1
+765	4 {} byte b0	1
+766	>= 4 {} byte	1
+767	FileStream () filename ,	1
+768	new FileStream () filename	1
+769	filename , FileMode .	1
+770	== 0xbb && b2 ==	1
+771	b1 == 0xbb && b2	1
+772	() filename , FileMode	1
+773	{} byte [] bom	1
+774	{} using () var	1
+775	filename {} using ()	1
+776	string filename {} using	1
+777	Read {} byte []	1
+778	Open , FileAccess .	1
+779	= new FileStream ()	1
+780	char ch {} return char	1
+781	GetEncoding () string filename {}	1
+782	Encoding GetEncoding () string filename	1
+783	{} return ch == ''	1
+784	public static Encoding GetEncoding ()	1
+785	ch {} return char .	1
+786	static Encoding GetEncoding () string	1
+787	return ch == '' ||	1
+788	bool IsDigit () char ch	1
+789	static bool IsDigit () char	1
+790	IsDigit () char ch {}	1
+791	== '' || char .	1
+792	ch == '' || char	1
+793	ch {} return ch ==	1
+794	char ch {} return ch	1
+795	IsVariableChar () char ch {}	1
+796	bool IsVariableChar () char ch	1
+797	static bool IsVariableChar () char	1
+798	public static bool IsVariableChar ()	1
+799	{} public static bool IsVariableChar	1
+800	Utils {} public static bool	1
+801	class Utils {} public static	1
+802	public class Utils {} public	1
+803	{} public class Utils {}	1
+804	NGramm {} public class Utils	1
+805	namespace NGramm {} public class	1
+806	b2 == 0xfe && b3	1
+807	&& b2 == 0xfe &&	1
+808	b3 == 0xff return Encoding	1
+809	b1 == 0xfe return Encoding	1
+810	() b0 == 0x00 &&	1
+811	== 0xfe && b3 ==	1
+812	&& b3 == 0xff return	1
+813	== 0x00 && b1 ==	1
+814	b0 == 0x00 && b1	1
+815	== 0x00 && b2 ==	1
+816	0xfe && b3 == 0xff	1
+817	0x00 && b2 == 0xfe	1
+818	0x00 && b1 == 0x00	1
+819	b0 == 0xfe && b1	1
+820	if () b0 == 0x00	1
+821	b1 == 0xff return Encoding	1
+822	public static bool IsDigit ()	1
+823	0xfe && b1 == 0xff	1
+824	== 0xfe && b1 ==	1
+825	&& b1 == 0xff return	1
+826	== 0xff && b1 ==	1
+827	if () b0 == 0xfe	1
+828	== 0xfe return Encoding .	1
+829	() b0 == 0xfe &&	1
+830	&& b1 == 0xfe return	1
+831	0xff && b1 == 0xfe	1
+832	[] bom = new	1
+833	= bom [] 3	1
+834	= bom [] 0	1
+835	bom [] 0 ;	1
+836	b3 = bom []	1
+837	byte b3 = bom	1
+838	bom [] 2 ;	1
+839	byte b1 = bom	1
+840	b1 = bom []	1
+841	= bom [] 2	1
+842	b2 = bom []	1
+843	byte b2 = bom	1
+844	bom [] 1 ;	1
+845	= bom [] 1	1
+846	&& b3 == 0xff	1
+847	0xfe && b3 ==	1
+848	== 0x00 && b1	1
+849	0x00 && b2 ==	1
+850	== 0xfe && b3	1
+851	b3 == 0xff return	1
+852	b0 == 0x00 &&	1
+853	b1 == 0x00 &&	1
+854	&& b1 == 0x00	1
+855	0xbf return Encoding .	1
+856	() b0 == 0x00	1
+857	0x00 && b1 ==	1
+858	== 0x00 && b2	1
+859	new FileStream ()	1
+860	filename , FileMode	1
+861	, FileAccess .	1
+862	== 0xef && b1	1
+863	() filename ,	1
+864	FileStream () filename	1
+865	Open , FileAccess	1
+866	filename {} using	1
+867	() var reader	1
+868	= new FileStream	1
+869	, FileMode .	1
+870	using () var	1
+871	{} using ()	1
+872	== 0xbb && b2	1
+873	byte b0 = bom	1
+874	== 0xbf return Encoding	1
+875	bom [] 3 ;	1
+876	&& b2 == 0xbf	1
+877	0xbb && b2 ==	1
+878	b2 == 0xbf return	1
+879	b0 = bom []	1
+880	&& b1 == 0xbb	1
+881	0xef && b1 ==	1
+882	b1 == 0xbb &&	1
+883	b0 == 0xef &&	1
+884	() b0 == 0xef	1
+885	public class Utils {}	1
+886	{} public static bool	1
+887	Utils {} public static	1
+888	{} public class Utils	1
+889	NGramm {} public class	1
+890	namespace NGramm {} public	1
+891	class Utils {} public	1
+892	static Encoding GetEncoding ()	1
+893	() string filename {}	1
+894	GetEncoding () string filename	1
+895	public static Encoding GetEncoding	1
+896	IsDigit () ch ;	1
+897	{} return char .	1
+898	byte [] 4 ;	1
+899	new byte [] 4	1
+900	IsVariableChar () char ch	1
+901	byte [] bom =	1
+902	= new byte []	1
+903	Read () bom ,	1
+904	bool IsVariableChar () char	1
+905	return ch == ''	1
+906	{} return ch ==	1
+907	public static bool IsVariableChar	1
+908	static bool IsVariableChar ()	1
+909	ch {} return ch	1
+910	ch == '' ||	1
+911	0xfe && b1 ==	1
+912	== 0xff && b1	1
+913	b0 == 0xff &&	1
+914	== 0xfe && b1	1
+915	b1 == 0xff return	1
+916	&& b1 == 0xff	1
+917	() b0 == 0xff	1
+918	&& b1 == 0xfe	1
+919	b2 == 0xfe &&	1
+920	&& b2 == 0xfe	1
+921	0xff && b1 ==	1
+922	== 0xfe return Encoding	1
+923	b1 == 0xfe return	1
+924	'' || char .	1
+925	== '' || char	1
+926	public static bool IsDigit	1
+927	Encoding GetEncoding () string	1
+928	ch {} return char	1
+929	IsLetterOrDigit () ch ;	1
+930	IsDigit () char ch	1
+931	b0 == 0xfe &&	1
+932	() b0 == 0xfe	1
+933	0xfe return Encoding .	1
+934	bool IsDigit () char	1
+935	static bool IsDigit ()	1
+936	{} byte b0 =	1
