@@ -69,6 +69,10 @@ namespace NGramm
                         words = NgrammProcessor.Words(NgrammProcessor.ignore_punctuation ? processor.unsignedTextorg : processor.endsignedTextorg);
                         maxWindow = words.Length;
                         break;
+                    case 3:
+                        words = processor.CodeWords();
+                        maxWindow = words.Length;
+                        break;
                 }
 
              
@@ -87,6 +91,7 @@ namespace NGramm
                     rep = false;
                     incPerStep = 90 / sizes;
                 }
+
                 processor.progressReporter.StartNewOperation("Обрахунок гіпс");
                 processor.progressReporter.MoveProgress(5);
                 var ngramsInWindows = Partitioner.Create(initialWindowSize, maxWindow + 1, window_grow)
@@ -109,6 +114,11 @@ namespace NGramm
                             case 2:
                                 ff = fixed_pos ? part.Item1 : maxWindow;
                                 res = (part.Item1, processor.ProcessWordNGrammsInWindow(words, Ngramm, part.Item1, step, start_pos, ff)
+                                .Select(p => p.count).ToArray());
+                                break;
+                            case 3:
+                                ff = fixed_pos ? part.Item1 : maxWindow;
+                                res = (part.Item1, processor.ProcessCodeWordNGrammsInWindow(words, Ngramm, part.Item1, step, start_pos, ff)
                                 .Select(p => p.count).ToArray());
                                 break;
                         }

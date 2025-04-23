@@ -164,7 +164,7 @@ namespace NGramm
             {
                 processor = new NgrammProcessor(openFileDialog1.FileName, reporter);
                 filename = Path.GetFileName(openFileDialog1.FileName);
-                await processor.Preprocess();
+                await processor.Preprocess(_logger);
                 toolStripStatusLabel1.Text = "Текст: " + Path.GetFileName(openFileDialog1.FileName);
                 еуіеToolStripMenuItem.Text = $"L={File.ReadAllText(openFileDialog1.FileName).Length}";
                 порахуватиToolStripMenuItem.Enabled = true;
@@ -491,8 +491,98 @@ namespace NGramm
                 }
             }
             else if (IndexPorah == 3)
-            {
-                // to do code words
+            { 
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    string folder = saveFileDialog1.FileName;
+                    Directory.CreateDirectory(folder);
+                    StreamWriter wr = new StreamWriter(folder + "//all_ngrams.txt");
+                    wr.WriteLine("N\tAbsolute count\tCount");
+                    var ngrams = processor.GetCodeWordsNgrams();
+                    int i;
+                    for (i = 0; i < ngrams.Count; i++)
+                    {
+                        wr.WriteLine((i + 1).ToString() + "\t" + ngrams.ElementAt(i).absCount.ToString() + "\t" + ngrams.ElementAt(i).count.ToString());
+                    }
+                    wr.Close();
+
+
+
+                    wr = new StreamWriter(folder + "//" + SingleStatN.Text + "-grams.txt"); ;
+                    int nh = int.Parse(SingleStatN.Text);
+                    wr.WriteLine("Word Ngram Statistic for " + nh.ToString() + "-grams");
+                    wr.WriteLine();
+                    int k = 1;
+                    NGrammContainer item = processor.GetCodeWordsNgrams().ElementAt(nh - 1);
+                    wr.WriteLine();
+                    wr.WriteLine("{0}\t{2}\t{1}", "RANK", "F", "NGramm");
+                    //i = 1;
+                    Dictionary<string, int> ngrms = Helpers.SortByVal(item.GetNgrams());
+                    Dictionary<int, String> statistics = new Dictionary<int, String>();
+                    string ngr;
+                    int rank = 0;
+
+                    if (CommonRankBox.Checked)
+                    {
+                        foreach (string ng in ngrms.Keys)
+                        {
+                            if (statistics.Keys.Contains(ngrms[ng]))
+                            {
+                                //statistics[ngrms[ng]] += ", " + ng;
+                            }
+                            else
+                            {
+                                statistics.Add(ngrms[ng], ng);
+                            }
+                        }
+                        foreach (int ng in statistics.Keys)
+                        {
+                            ngr = statistics[ng];
+                            rank++;
+                            if (ngr.Contains("\n"))
+                            {
+                                ngr = ngr.Replace("\n", "[new line]");
+                            }
+                            wr.WriteLine("{0}\t{2}\t{1}", rank.ToString(), ng, statistics[ng].ToString());
+                        }
+                    }
+                    else
+                    {
+                        foreach (string ng in ngrms.Keys)
+                        {
+                            ngr = ng;
+                            rank++;
+                            if (ng.Contains("\n"))
+                            {
+                                ngr = ng.Replace("\n", "[new line]");
+                            }
+                            wr.WriteLine("{0}\t{2}\t{1}", rank.ToString(), ngrms[ng].ToString(), ngr);
+                        }
+
+                    }
+                    wr.Close();
+
+                    wr = new StreamWriter(folder + "//zipf2_plot_data.txt");
+                    wr.WriteLine("F\tPDF");
+                    Statistics stats = new Statistics(item, CommonRankBox.Checked);
+                    foreach (int repd in stats.GetZipf2Stats().Keys.Reverse())
+                    {
+                        wr.WriteLine(repd + "\t" + stats.GetZipf2Stats()[repd].ToString());
+
+                    }
+                    wr.Close();
+
+                    wr = new StreamWriter(folder + "//pareto_plot_data.txt");
+                    wr.WriteLine("Pareto plot data n=" + item.n.ToString());
+                    wr.WriteLine();
+                    wr.WriteLine("F\tCDF");
+                    foreach (double rep in stats.GetParetroStats().Keys)
+                    {
+                        wr.WriteLine(rep + "\t" + stats.GetParetroStats()[rep].ToString());
+                    }
+
+                    wr.Close();
+                }
             }
         }
 
@@ -535,7 +625,13 @@ namespace NGramm
             }
             else if (IndexPorah == 3)
             {
-                // to do code words
+                var lits = processor.GetCodeWordsNgrams();
+                List<NGrammContainer> conts = new List<NGrammContainer>();
+                for (int i = from; i <= to; i++)
+                {
+                    conts.Add(lits.ElementAt(i));
+                }
+                unified = new NGrammContainer(conts);
             }
             
             SaveMultStatsButton.Enabled = true;
@@ -704,7 +800,7 @@ namespace NGramm
                     wr.Close();
                 }
             }
-            else if (IndexPorah == 2)
+            else if (IndexPorah == 2 || IndexPorah == 3)
             {
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
@@ -782,10 +878,6 @@ namespace NGramm
 
                     wr.Close();
                 }
-            }
-            else if (IndexPorah == 3)
-            {
-                // to do code words
             }
         }
 
@@ -892,7 +984,10 @@ namespace NGramm
             }
             else if (IndexPorah == 3)
             {
-                // to do code words
+                Statistics stats = new Statistics(processor.GetCodeWordsNgrams().ElementAt(N), CommonRankBox.Checked);
+                StatisticsWindow statWindow = new StatisticsWindow();
+                statWindow.SetStats(stats, int.Parse(SingleStatN.Text) - 1);
+                statWindow.ShowDialog();
             }
         }
 

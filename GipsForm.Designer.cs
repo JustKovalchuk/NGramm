@@ -69,7 +69,7 @@
             this.label1.Location = new System.Drawing.Point(6, 11);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(190, 20);
+            this.label1.Size = new System.Drawing.Size(131, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Крок переміщення вікна";
             // 
@@ -78,7 +78,7 @@
             this.textBox1.Location = new System.Drawing.Point(212, 6);
             this.textBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(79, 26);
+            this.textBox1.Size = new System.Drawing.Size(79, 20);
             this.textBox1.TabIndex = 1;
             this.textBox1.Text = "100";
             // 
@@ -88,7 +88,7 @@
             this.label2.Location = new System.Drawing.Point(6, 57);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(196, 20);
+            this.label2.Size = new System.Drawing.Size(133, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Початковий розмір вікна";
             // 
@@ -97,14 +97,14 @@
             this.textBox2.Location = new System.Drawing.Point(212, 50);
             this.textBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(79, 26);
+            this.textBox2.Size = new System.Drawing.Size(79, 20);
             this.textBox2.TabIndex = 1;
             this.textBox2.Text = "100";
             this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(4, 238);
+            this.button1.Location = new System.Drawing.Point(4, 232);
             this.button1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(155, 35);
@@ -128,7 +128,7 @@
             this.listView1.Location = new System.Drawing.Point(3, 0);
             this.listView1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(373, 316);
+            this.listView1.Size = new System.Drawing.Size(373, 305);
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -155,7 +155,7 @@
             this.label3.Location = new System.Drawing.Point(6, 34);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(179, 20);
+            this.label3.Size = new System.Drawing.Size(122, 13);
             this.label3.TabIndex = 0;
             this.label3.Text = "Крок збільшення вікна";
             // 
@@ -164,7 +164,7 @@
             this.textBox3.Location = new System.Drawing.Point(212, 27);
             this.textBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(79, 26);
+            this.textBox3.Size = new System.Drawing.Size(79, 20);
             this.textBox3.TabIndex = 1;
             this.textBox3.Text = "100";
             // 
@@ -174,7 +174,7 @@
             this.label4.Location = new System.Drawing.Point(9, 104);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(152, 20);
+            this.label4.Size = new System.Drawing.Size(102, 13);
             this.label4.TabIndex = 0;
             this.label4.Text = "Початкова позиція";
             // 
@@ -183,7 +183,7 @@
             this.textBox4.Location = new System.Drawing.Point(177, 97);
             this.textBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(114, 26);
+            this.textBox4.Size = new System.Drawing.Size(114, 20);
             this.textBox4.TabIndex = 1;
             this.textBox4.Text = "0";
             this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
@@ -194,7 +194,7 @@
             this.label5.Location = new System.Drawing.Point(9, 130);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(127, 20);
+            this.label5.Size = new System.Drawing.Size(87, 13);
             this.label5.TabIndex = 0;
             this.label5.Text = "Кінцева позиція";
             // 
@@ -203,7 +203,7 @@
             this.textBox5.Location = new System.Drawing.Point(177, 127);
             this.textBox5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(114, 26);
+            this.textBox5.Size = new System.Drawing.Size(114, 20);
             this.textBox5.TabIndex = 1;
             this.textBox5.Text = "0";
             // 
@@ -213,7 +213,7 @@
             this.checkBox1.Location = new System.Drawing.Point(6, 155);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(218, 24);
+            this.checkBox1.Size = new System.Drawing.Size(153, 17);
             this.checkBox1.TabIndex = 5;
             this.checkBox1.Text = "Фіксований розмір вікна";
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -224,14 +224,14 @@
             this.checkBox2.Location = new System.Drawing.Point(6, 205);
             this.checkBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(216, 24);
+            this.checkBox2.Size = new System.Drawing.Size(151, 17);
             this.checkBox2.TabIndex = 5;
             this.checkBox2.Text = "Фіксована позиція вікна";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(177, 238);
+            this.button2.Location = new System.Drawing.Point(177, 232);
             this.button2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(151, 35);
@@ -246,7 +246,7 @@
             this.label6.Location = new System.Drawing.Point(76, 629);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(0, 20);
+            this.label6.Size = new System.Drawing.Size(0, 13);
             this.label6.TabIndex = 0;
             // 
             // panel1
@@ -276,12 +276,12 @@
             this.panel1.Location = new System.Drawing.Point(378, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(363, 316);
+            this.panel1.Size = new System.Drawing.Size(363, 305);
             this.panel1.TabIndex = 6;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(196, 280);
+            this.button3.Location = new System.Drawing.Point(196, 276);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(132, 25);
             this.button3.TabIndex = 11;
@@ -296,7 +296,7 @@
             this.checkBox5.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox5.Location = new System.Drawing.Point(89, 281);
             this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(67, 24);
+            this.checkBox5.Size = new System.Drawing.Size(48, 17);
             this.checkBox5.TabIndex = 10;
             this.checkBox5.Text = "log y";
             this.checkBox5.UseVisualStyleBackColor = true;
@@ -309,7 +309,7 @@
             this.checkBox4.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox4.Location = new System.Drawing.Point(10, 281);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(67, 24);
+            this.checkBox4.Size = new System.Drawing.Size(48, 17);
             this.checkBox4.TabIndex = 9;
             this.checkBox4.Text = "log x";
             this.checkBox4.UseVisualStyleBackColor = true;
@@ -321,7 +321,7 @@
             this.checkBox3.Location = new System.Drawing.Point(6, 181);
             this.checkBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(348, 24);
+            this.checkBox3.Size = new System.Drawing.Size(239, 17);
             this.checkBox3.TabIndex = 8;
             this.checkBox3.Text = "Фіксований розмір вікна (неусереднений)";
             this.checkBox3.UseVisualStyleBackColor = true;
@@ -331,7 +331,7 @@
             this.textBox6.Location = new System.Drawing.Point(212, 73);
             this.textBox6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(79, 26);
+            this.textBox6.Size = new System.Drawing.Size(79, 20);
             this.textBox6.TabIndex = 7;
             this.textBox6.Text = "2000";
             // 
@@ -341,7 +341,7 @@
             this.label7.Location = new System.Drawing.Point(7, 80);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(171, 20);
+            this.label7.Size = new System.Drawing.Size(118, 13);
             this.label7.TabIndex = 6;
             this.label7.Text = "Кінцевий розмір вікна";
             this.label7.Click += new System.EventHandler(this.label7_Click);

@@ -156,6 +156,7 @@
     <Compile Include="StatisticsWindow.Designer.cs">
       <DependentUpon>StatisticsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Utils.cs" />
     <EmbeddedResource Include="GipsForm.resx">
       <DependentUpon>GipsForm.cs</DependentUpon>
     </EmbeddedResource>
