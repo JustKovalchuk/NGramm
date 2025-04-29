@@ -50,6 +50,29 @@ namespace NGramm
             PrepareJiebaResources();
         }
 
+        private async Task OpenFile(bool isProgramText=false)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                processor = new NgrammProcessor(openFileDialog1.FileName, reporter);
+                filename = Path.GetFileName(openFileDialog1.FileName);
+                await processor.Preprocess(_logger);
+                var textType = isProgramText ? "програмний" : "природний";
+                toolStripStatusLabel1.Text = $"Текст ({textType}): " + Path.GetFileName(openFileDialog1.FileName);
+                еуіеToolStripMenuItem.Text = $"L={File.ReadAllText(openFileDialog1.FileName).Length}";
+                порахуватиToolStripMenuItem.Enabled = true;
+                groupBox4.Enabled = true;
+                groupBox1.Enabled = true;
+                IndexPorah = tabControl1.SelectedIndex;
+            }
+            else
+            {
+                groupBox4.Enabled = false;
+                groupBox1.Enabled = false;
+                порахуватиToolStripMenuItem.Enabled = false;
+            }
+        }
+
         private void PrepareMeCabResources()
         {
             string tempDictPath = Path.Combine(Path.GetTempPath(), "MeCab_dict");
@@ -160,28 +183,6 @@ namespace NGramm
 
         private void RunOnUiContext(Action ac) =>
             SyncContext(_ => ac(), null);
-
-        private async void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                processor = new NgrammProcessor(openFileDialog1.FileName, reporter);
-                filename = Path.GetFileName(openFileDialog1.FileName);
-                await processor.Preprocess(_logger);
-                toolStripStatusLabel1.Text = "Текст: " + Path.GetFileName(openFileDialog1.FileName);
-                еуіеToolStripMenuItem.Text = $"L={File.ReadAllText(openFileDialog1.FileName).Length}";
-                порахуватиToolStripMenuItem.Enabled = true;
-                groupBox4.Enabled = true;
-                groupBox1.Enabled = true;
-                IndexPorah = tabControl1.SelectedIndex;
-            }
-            else
-            {
-                groupBox4.Enabled = false;
-                groupBox1.Enabled = false;
-                порахуватиToolStripMenuItem.Enabled = false;
-            }
-        }
         
         // кнопка Статистика/для1n-грам/показати_n_грами
         private void button2_Click(object sender, EventArgs e)
@@ -1104,19 +1105,27 @@ namespace NGramm
             _logger.Print("Запуск логера...");
         }
 
-        private void groupBox3_Enter(object sender, EventArgs e)
-        {
 
+        private async void природнийТекстToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            codeWordsPanel.Hide();
+            codeWordsPanel.Enabled = false;
+
+            wordsPanel.Show();
+            wordsPanel.Enabled = true;
+
+            await OpenFile(isProgramText: false);
         }
 
-        private void debugTextBox_TextChanged(object sender, EventArgs e)
+        private async void програмнийКодToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            wordsPanel.Hide();
+            wordsPanel.Enabled = false;
 
-        }
+            codeWordsPanel.Show();
+            codeWordsPanel.Enabled = true;
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
+            await OpenFile(isProgramText: true);
         }
     }
 }

@@ -612,12 +612,19 @@ namespace NGramm
 
                 if (removeComments)
                 {
+                    var isSlashComment = ch == '/' && i + 1 < n && code[i + 1] == '/';
+                    var isHashtagComment = ch == '#';
                     // Start of // and # comment
-                    if ((ch == '/' && i + 1 < n && code[i + 1] == '/') || ch == '#')
+                    if (isSlashComment || isHashtagComment)
                     {
                         while (i < n && code[i] != '\n')
                             i++;
-                        result.Append(' ');
+                        if (isSlashComment)
+                            result.Append(" //");
+                        else if (isHashtagComment)
+                            result.Append(" #");
+                        else
+                            result.Append(" ");
                         continue;
                     }
 
@@ -628,7 +635,7 @@ namespace NGramm
                         while (i + 1 < n && !(code[i] == '*' && code[i + 1] == '/'))
                             i++;
                         i += 2; // skip '*/'
-                        result.Append(' ');
+                        result.Append(" /* */");
                         continue;
                     }
                 }
@@ -648,25 +655,25 @@ namespace NGramm
             return result.ToString();
         }
         
-        public static List<string> AddClosingBracket(List<string> code)
-        {
-            for (int i = 0; i < code.Count; i++)
-            {
-                switch (code[i])
-                {
-                    case "{":
-                        code[i] = code[i] + "}";
-                        break;
-                    case "[":
-                        code[i] = code[i] + "]";
-                        break;
-                    case "(":
-                        code[i] = code[i] + ")";
-                        break;
-                }
-            }
-            return code;
-        }
+        // public static List<string> AddClosingBracket(List<string> code)
+        // {
+        //     for (int i = 0; i < code.Count; i++)
+        //     {
+        //         switch (code[i])
+        //         {
+        //             case "{":
+        //                 code[i] = code[i] + "}";
+        //                 break;
+        //             case "[":
+        //                 code[i] = code[i] + "]";
+        //                 break;
+        //             case "(":
+        //                 code[i] = code[i] + ")";
+        //                 break;
+        //         }
+        //     }
+        //     return code;
+        // }
         
         public static List<string> TokenizeCode(string code, bool removeComments=true, bool removeStrings=true)
         {
@@ -697,7 +704,7 @@ namespace NGramm
                     continue;
                 }
                 
-                if (ch == '\'' || ch =='`' && i > 0 && i < n - 1 && 
+                if ((ch == '\'' || ch =='`') && i > 0 && i < n - 1 && 
                     char.IsLetter(code[i - 1]) && char.IsLetter(code[i + 1]))
                 {
                     current.Append(ch);
@@ -880,7 +887,7 @@ namespace NGramm
                     result.RemoveAt(j);
             }
 
-            return AddClosingBracket(result);
+            return result;
         }
         
         #endregion
