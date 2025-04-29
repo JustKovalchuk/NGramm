@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Globalization;
-using System.Net;
 using JiebaNet.Segmenter;
 using NMeCab;
 using System.Text;
@@ -15,14 +14,11 @@ namespace NGramm
 {
     public class NgrammProcessor
     {
-        private const int ProgressDivider = 1_000;
         bool ignore_spaces = false;
         bool ignore_nlines = false;
         bool ignore_ends = false;
-        public static string signs = "\\|\"{}()[]=+_~!`@'#$-…%^&*:№:";
         public string ss = "\\|\"{}()[]=+_~`'@#$…%^&*№:";
         public static HashSet<char> endsigns = new HashSet<char>(".?!;。？！¿¡؟؛¿¡።༼⸮〽⋯…⸰;".ToCharArray());
-        public static string endsignss = ",.?!;";
         public string rawTextorg = "";
         public Encoding fileEncoding;
         public int CountDesiredVariables = 0;
@@ -34,9 +30,6 @@ namespace NGramm
         public static bool show_NBS = true;
         public static bool ignore_case = true;
         public static bool ignore_punctuation = true;
-        
-        public static bool removeCodeComments = true;
-        public static bool removeCodeStrings = true;
 
         private static HashSet<char> spaces_list = new HashSet<char> { '\u0020', '\u00a0', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008', '\u2009', '\u200a', '\u202f', '\u205f', '\u3000', '\u200b' };
         private static char[] skip_spaces = new char[] { '\u3000' };
@@ -53,11 +46,10 @@ namespace NGramm
         private static Regex spacesInRow = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.Multiline);
 
         private ConcurrentBag<NGrammContainer> symbol_ngrams = new ConcurrentBag<NGrammContainer>();
-        private ConcurrentBag<NGrammContainer> words_ngrams = new ConcurrentBag<NGrammContainer>();
-        private ConcurrentBag<NGrammContainer> code_words_ngrams = new ConcurrentBag<NGrammContainer>();
+        protected ConcurrentBag<NGrammContainer> words_ngrams = new ConcurrentBag<NGrammContainer>();
         private ConcurrentBag<NGrammContainer> literal_ngrams = new ConcurrentBag<NGrammContainer>();
 
-        private readonly string _filename;
+        protected readonly string _filename;
         public readonly ProgressReporter progressReporter;
 
         public NgrammProcessor(string filename, ProgressReporter reporter)
@@ -70,13 +62,12 @@ namespace NGramm
 
         private static bool IsEndSign(char ch) => endsigns.Contains(ch);
 
-        public async Task Preprocess(SimpleLogger _my_logger)
+        public async Task Preprocess()
         {
             await Task.Run(() =>
             {
                 Regex reg_exp = new Regex(@"(?<=(\w))--(?=(\w))");
 
-                _my_logger.Print("Ініціалізація");
                 progressReporter.StartNewOperation("Ініціалізація");
                 progressReporter.MoveProgress(5);
                 rawTextorg = reg_exp.Replace(File.ReadAllText(_filename), " ").Trim().Replace("\r", "");
@@ -400,7 +391,7 @@ namespace NGramm
 
         #region Word ngramms
 
-        public List<NGrammContainer> ProcessWordNGrammsInWindow(string[] words ,int n, int windowSize, int windowStep, int startPos, int endPos)
+        public virtual List<NGrammContainer> ProcessWordNGrammsInWindow(string[] words ,int n, int windowSize, int windowStep, int startPos, int endPos)
         {
             var res = new List<NGrammContainer>();
             int pos = startPos;
@@ -415,14 +406,14 @@ namespace NGramm
             return res;
         }
 
-        public Task ProcessWordNGramms(int n) 
+        public virtual Task ProcessWordNGramms(int n) 
         {
             return Task.Run(() =>
             {
                 progressReporter.StartNewOperation($"Обчислення словесних н-грамм від 1 до {n}");
                 progressReporter.MoveProgress();
 
-                var words = Words(ignore_punctuation ? unsignedTextorg : endsignedTextorg);
+                var words = WordsNotStatic();
                 CountDesiredVariables = words.Length;
                 ClearAllNGrammContainers();
                 int progressMult = words.Length / 95;
@@ -438,10 +429,9 @@ namespace NGramm
             });
         }
         
-        public int GetWordsCount() => Words(ignore_punctuation ? unsignedTextorg : endsignedTextorg).Length;
-        public int GetCodeWordsCount(bool removeComments, bool removeStrings) => TokenizeCode(File.ReadAllText(_filename, fileEncoding), removeComments, removeStrings).ToArray().Length;
+        public virtual int GetWordsCount() => WordsNotStatic().Length;
 
-        private NGrammContainer ProcessWordNgrmmToContainer(string[] words, int n, bool skipss, bool ignoreCase, int progressMul = 0, bool isCode = false)
+        protected NGrammContainer ProcessWordNgrmmToContainer(string[] words, int n, bool skipss, bool ignoreCase, int progressMul = 0, bool isCode = false)
         {
             var container = new NGrammContainer(n);
             bool breaked;
@@ -513,384 +503,6 @@ namespace NGramm
         }
 
         #endregion
-
-        #region CodeWords ngrams
-
-        public List<NGrammContainer> ProcessCodeWordNGrammsInWindow(string[] words ,int n, int windowSize, int windowStep, int startPos, int endPos)
-        {
-            var res = new List<NGrammContainer>();
-            int pos = startPos;
-            while (endPos >= pos + windowSize)
-            {
-                var wrds = words.Skip(pos).Take(windowSize).ToArray();
-                var cts = new NGrammContainer(Enumerable.Range(1, n).Select(nn => ProcessWordNgrmmToContainer(wrds, nn, false, false,  0, true)).ToList(), n);
-                res.Add(cts);
-                
-                pos += windowStep;
-            }
-            return res;
-        }
-        
-        public Task ProcessCodeWordNGramms(int n, SimpleLogger myLogger) 
-        {
-            return Task.Run(() =>
-            {
-                progressReporter.StartNewOperation($"Обчислення словесних н-грамм в коді від 1 до {n}");
-                progressReporter.MoveProgress();
-
-                string codeSample = File.ReadAllText(_filename, fileEncoding);
-                var tokens = TokenizeCode(codeSample, removeCodeComments, removeCodeStrings);
-                var words = tokens.ToArray();
-                CountDesiredVariables = words.Length;
-                ClearAllNGrammContainers();
-                int progressMult = words.Length / 95;
-
-                Parallel.For(1, n + 1, PerformanceSettings.ParallelOpt, nn =>
-                {
-                    var ct = ProcessWordNgrmmToContainer(words, nn, false, false,  progressMult, true);
-                    code_words_ngrams.Add(ct);
-                });
-
-                code_words_ngrams = new ConcurrentBag<NGrammContainer>(code_words_ngrams.OrderByDescending(w => w.n));
-                progressReporter.Finish();
-            });
-        }
-
-        #endregion
-
-        #region CodeWordsPreproces
-        
-        public static string RemoveCommentsAndStrings(string code, bool removeComments=true, bool removeStrings=true)
-        {
-            var result = new StringBuilder();
-            int i = 0;
-            int n = code.Length;
-            char? inString = null;
-            bool escape = false;
-
-            Console.WriteLine("modified by LiberMaeotis creators (GDG 2025)");
-            while (i < n)
-            {
-                char ch = code[i];
-
-                if (removeStrings)
-                {
-                    if (inString != null)
-                    {
-                        if (escape)
-                        {
-                            escape = false;
-                            result.Append(""); // remove escaped char
-                        }
-                        else if (ch == '\\')
-                        {
-                            escape = true;
-                            result.Append(""); // remove backslash
-                        }
-                        else if (ch == inString)
-                        {
-                            result.Append(inString); // close quote
-                            inString = null;
-                        }
-                        else
-                        {
-                            result.Append(""); // remove inside string
-                        }
-                        i++;
-                        continue;
-                    }
-
-                    // Start of a string
-                    if (ch == '"' || ch == '\'')
-                    {
-                        inString = ch;
-                        result.Append(ch);
-                        i++;
-                        continue;
-                    }
-                }
-
-                if (removeComments)
-                {
-                    var isSlashComment = ch == '/' && i + 1 < n && code[i + 1] == '/';
-                    var isHashtagComment = ch == '#';
-                    // Start of // and # comment
-                    if (isSlashComment || isHashtagComment)
-                    {
-                        while (i < n && code[i] != '\n')
-                            i++;
-                        if (isSlashComment)
-                            result.Append(" //");
-                        else if (isHashtagComment)
-                            result.Append(" #");
-                        else
-                            result.Append(" ");
-                        continue;
-                    }
-
-                    // Start of /* */ comment
-                    if (ch == '/' && i + 1 < n && code[i + 1] == '*')
-                    {
-                        i += 2;
-                        while (i + 1 < n && !(code[i] == '*' && code[i + 1] == '/'))
-                            i++;
-                        i += 2; // skip '*/'
-                        result.Append(" /* */");
-                        continue;
-                    }
-                }
-
-                // Newlines -> space
-                if (ch == '\r' || ch == '\n')
-                {
-                    result.Append(' ');
-                    i++;
-                    continue;
-                }
-
-                result.Append(ch);
-                i++;
-            }
-
-            return result.ToString();
-        }
-        
-        // public static List<string> AddClosingBracket(List<string> code)
-        // {
-        //     for (int i = 0; i < code.Count; i++)
-        //     {
-        //         switch (code[i])
-        //         {
-        //             case "{":
-        //                 code[i] = code[i] + "}";
-        //                 break;
-        //             case "[":
-        //                 code[i] = code[i] + "]";
-        //                 break;
-        //             case "(":
-        //                 code[i] = code[i] + ")";
-        //                 break;
-        //         }
-        //     }
-        //     return code;
-        // }
-        
-        public static List<string> TokenizeCode(string code, bool removeComments=true, bool removeStrings=true)
-        {
-            code = code.Replace("\t", " ");
-            code = RemoveCommentsAndStrings(code, removeComments, removeStrings); // reuse earlier C# version
-            var result = new List<string>();
-            int i = 0;
-            int n = code.Length;
-
-            var current = new StringBuilder();
-            string state = null; // "var", "num", "sym"
-
-            var specialExceptions = new HashSet<char> { ',', ';', '.', '(', '{', '[', '"', '\'', ')', '}', ']' };
-
-            while (i < n)
-            {
-                char ch = code[i];
-
-                if (char.IsWhiteSpace(ch) || ch == '\n' || ch == '\r')
-                {
-                    if (current.Length > 0)
-                    {
-                        result.Add(current.ToString());
-                        current.Clear();
-                        state = null;
-                    }
-                    i++;
-                    continue;
-                }
-                
-                if ((ch == '\'' || ch =='`') && i > 0 && i < n - 1 && 
-                    char.IsLetter(code[i - 1]) && char.IsLetter(code[i + 1]))
-                {
-                    current.Append(ch);
-                    i++;
-                    continue;
-                }
-                
-                // if (")]}}".Contains(ch))
-                // {
-                //     i++;
-                //     continue;
-                // }
-                //
-                // if ("([{".Contains(ch))
-                // {
-                //     if (current.Length > 0)
-                //     {
-                //         result.Add(current.ToString());
-                //         current.Clear();
-                //         state = null;
-                //     }
-                //     result.Add(ch.ToString());
-                //     i++;
-                //     continue;
-                // }
-                if (specialExceptions.Contains(ch))
-                {
-                    if (current.Length > 0)
-                    {
-                        result.Add(current.ToString());
-                        current.Clear();
-                        state = null;
-                    }
-                    result.Add(ch.ToString());
-                    i++;
-                    continue;
-                }
-
-                if (Utils.IsVariableChar(ch))
-                {
-                    if (state == "var")
-                    {
-                        current.Append(ch);
-                    }
-                    else
-                    {
-                        if (current.Length > 0)
-                            result.Add(current.ToString());
-                        current.Clear();
-                        current.Append(ch);
-                        state = "var";
-                    }
-                    i++;
-                    continue;
-                }
-
-                if (Utils.IsDigit(ch))
-                {
-                    if (state == "num")
-                    {
-                        current.Append(ch);
-                    }
-                    else if (state == "var")
-                    {
-                        current.Append(ch); // part of var like var1
-                    }
-                    else
-                    {
-                        if (current.Length > 0)
-                            result.Add(current.ToString());
-                        current.Clear();
-                        current.Append(ch);
-                        state = "num";
-                    }
-                    i++;
-                    continue;
-                }
-
-                if (ch == '.' && state == "num" && i + 1 < n && Utils.IsDigit(code[i + 1]))
-                {
-                    current.Append('.');
-                    i++;
-                    continue;
-                }
-
-                if (!Utils.IsVariableChar(ch) && !Utils.IsDigit(ch))
-                {
-                    if (current.Length > 0)
-                    {
-                        result.Add(current.ToString());
-                        current.Clear();
-                        state = null;
-                    }
-
-                    current.Append(ch);
-                    i++;
-                    while (i < n)
-                    {
-                        char next = code[i];
-                        if (char.IsWhiteSpace(next) || specialExceptions.Contains(next) || Utils.IsVariableChar(next) || Utils.IsDigit(next))
-                            break;
-
-                        current.Append(next);
-                        i++;
-                    }
-
-                    result.Add(current.ToString());
-                    current.Clear();
-                    state = null;
-                    continue;
-                }
-
-                if (ch == '"')
-                {
-                    if (current.Length > 0)
-                    {
-                        result.Add(current.ToString());
-                        current.Clear();
-                    }
-
-                    current.Append(ch);
-                    i++;
-                    while (i < n && code[i] != '"')
-                    {
-                        current.Append(code[i]);
-                        i++;
-                    }
-                    current.Append('"');
-                    result.Add(current.ToString());
-                    current.Clear();
-                    i++;
-                    continue;
-                }
-
-                if (ch == '\'')
-                {
-                    if (current.Length > 0)
-                    {
-                        result.Add(current.ToString());
-                        current.Clear();
-                    }
-
-                    current.Append(ch);
-                    i++;
-                    while (i < n && code[i] != '\'')
-                    {
-                        current.Append(code[i]);
-                        i++;
-                    }
-                    current.Append('\'');
-                    result.Add(current.ToString());
-                    current.Clear();
-                    i++;
-                    continue;
-                }
-
-                if (state == "sym")
-                {
-                    current.Append(ch);
-                }
-                else
-                {
-                    if (current.Length > 0)
-                        result.Add(current.ToString());
-                    current.Clear();
-                    current.Append(ch);
-                    state = "sym";
-                }
-                i++;
-            }
-
-            if (current.Length > 0)
-                result.Add(current.ToString());
-
-            // Remove empty or whitespace-only tokens
-            for (int j = result.Count - 1; j >= 0; j--)
-            {
-                result[j] = result[j].Replace(" ", "");
-                if (string.IsNullOrWhiteSpace(result[j]))
-                    result.RemoveAt(j);
-            }
-
-            return result;
-        }
-        
-        #endregion
         
         private string RemoveEndSigns(string word)
         {
@@ -902,16 +514,6 @@ namespace NGramm
         public IReadOnlyCollection<NGrammContainer> GetSymbolNgrams() => symbol_ngrams;
 
         public IReadOnlyCollection<NGrammContainer> GetWordsNgrams() => words_ngrams;
-        
-        public IReadOnlyCollection<NGrammContainer> GetCodeWordsNgrams() => code_words_ngrams;
-
-        public string[] CodeWords()
-        {
-            string codeSample = File.ReadAllText(_filename, fileEncoding);
-            var tokens = TokenizeCode(codeSample, removeCodeComments, removeCodeStrings);
-            var words = tokens.ToArray();
-            return words;
-        }
 
         public static string[] Words(string inputText)
         {
@@ -927,6 +529,9 @@ namespace NGramm
             
             return TrySplitWords(text);
         }
+
+        public virtual string[] WordsNotStatic() => Words(
+            NgrammProcessor.ignore_punctuation ? this.unsignedTextorg : this.endsignedTextorg);
 
         public static string[] TrySplitWords(string inputText)
         {
@@ -976,12 +581,11 @@ namespace NGramm
         }
 
 
-        private void ClearAllNGrammContainers()
+        protected void ClearAllNGrammContainers()
         {
             symbol_ngrams = new ConcurrentBag<NGrammContainer>();
             literal_ngrams = new ConcurrentBag<NGrammContainer>();
             words_ngrams = new ConcurrentBag<NGrammContainer>();
-            code_words_ngrams = new ConcurrentBag<NGrammContainer>();
         }
 
         private string RemoveConsequtiveSpaces(string input)

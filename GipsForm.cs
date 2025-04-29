@@ -66,11 +66,7 @@ namespace NGramm
                         maxWindow = processor.rawTextorg.Substring(start_pos, end_pos - start_pos).Length;
                         break;
                     case 2:
-                        words = NgrammProcessor.Words(NgrammProcessor.ignore_punctuation ? processor.unsignedTextorg : processor.endsignedTextorg);
-                        maxWindow = words.Length;
-                        break;
-                    case 3:
-                        words = processor.CodeWords();
+                        words = processor.WordsNotStatic();
                         maxWindow = words.Length;
                         break;
                 }
@@ -114,11 +110,6 @@ namespace NGramm
                             case 2:
                                 ff = fixed_pos ? part.Item1 : maxWindow;
                                 res = (part.Item1, processor.ProcessWordNGrammsInWindow(words, Ngramm, part.Item1, step, start_pos, ff)
-                                .Select(p => p.count).ToArray());
-                                break;
-                            case 3:
-                                ff = fixed_pos ? part.Item1 : maxWindow;
-                                res = (part.Item1, processor.ProcessCodeWordNGrammsInWindow(words, Ngramm, part.Item1, step, start_pos, ff)
                                 .Select(p => p.count).ToArray());
                                 break;
                         }
