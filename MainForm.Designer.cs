@@ -74,8 +74,8 @@
             this.label16 = new System.Windows.Forms.Label();
             this.EndSignsList = new System.Windows.Forms.TextBox();
             this.SpecialSymbolsCount = new System.Windows.Forms.CheckBox();
-            this.CommonRankBox = new System.Windows.Forms.CheckBox();
             this.codeWordsPanel = new System.Windows.Forms.Panel();
+            this.CommonRankBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.HeapsN = new System.Windows.Forms.TextBox();
@@ -88,9 +88,6 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.OperationNameLabel = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.debugTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -106,7 +103,6 @@
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -119,7 +115,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(732, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(443, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -401,10 +397,10 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 557);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 513);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 14, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(732, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(443, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -566,17 +562,6 @@
             this.SpecialSymbolsCount.UseVisualStyleBackColor = true;
             this.SpecialSymbolsCount.CheckedChanged += new System.EventHandler(this.SpecialSymbolsCount_CheckedChanged);
             // 
-            // CommonRankBox
-            // 
-            this.CommonRankBox.AutoSize = true;
-            this.CommonRankBox.Location = new System.Drawing.Point(5, 178);
-            this.CommonRankBox.Margin = new System.Windows.Forms.Padding(2);
-            this.CommonRankBox.Name = "CommonRankBox";
-            this.CommonRankBox.Size = new System.Drawing.Size(96, 17);
-            this.CommonRankBox.TabIndex = 8;
-            this.CommonRankBox.Text = "Common Rank";
-            this.CommonRankBox.UseVisualStyleBackColor = true;
-            // 
             // codeWordsPanel
             // 
             this.codeWordsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -591,6 +576,17 @@
             this.codeWordsPanel.Size = new System.Drawing.Size(221, 88);
             this.codeWordsPanel.TabIndex = 18;
             this.codeWordsPanel.Visible = false;
+            // 
+            // CommonRankBox
+            // 
+            this.CommonRankBox.AutoSize = true;
+            this.CommonRankBox.Location = new System.Drawing.Point(5, 178);
+            this.CommonRankBox.Margin = new System.Windows.Forms.Padding(2);
+            this.CommonRankBox.Name = "CommonRankBox";
+            this.CommonRankBox.Size = new System.Drawing.Size(96, 17);
+            this.CommonRankBox.TabIndex = 8;
+            this.CommonRankBox.Text = "Common Rank";
+            this.CommonRankBox.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -705,41 +701,11 @@
             this.OperationNameLabel.Size = new System.Drawing.Size(0, 13);
             this.OperationNameLabel.TabIndex = 14;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 9);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(39, 13);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Debug";
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.debugTextBox);
-            this.panel1.Controls.Add(this.label4);
-            this.panel1.Location = new System.Drawing.Point(443, 32);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(277, 153);
-            this.panel1.TabIndex = 16;
-            // 
-            // debugTextBox
-            // 
-            this.debugTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.debugTextBox.Location = new System.Drawing.Point(10, 28);
-            this.debugTextBox.Multiline = true;
-            this.debugTextBox.Name = "debugTextBox";
-            this.debugTextBox.Size = new System.Drawing.Size(255, 120);
-            this.debugTextBox.TabIndex = 16;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(732, 579);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(443, 535);
             this.Controls.Add(this.OperationNameLabel);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.TimeLabel);
@@ -784,8 +750,6 @@
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -836,9 +800,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label OperationNameLabel;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox debugTextBox;
         private System.Windows.Forms.CheckBox checkBoxStrings;
         private System.Windows.Forms.CheckBox checkBoxComments;
         private System.Windows.Forms.ToolStripMenuItem природнийТекстToolStripMenuItem;
