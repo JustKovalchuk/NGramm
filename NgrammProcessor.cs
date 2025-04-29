@@ -575,7 +575,6 @@ namespace NGramm
 
                 if (removeStrings)
                 {
-                    // If inside a string literal
                     if (inString != null)
                     {
                         if (escape)
@@ -600,7 +599,7 @@ namespace NGramm
                         i++;
                         continue;
                     }
-                
+
                     // Start of a string
                     if (ch == '"' || ch == '\'')
                     {
@@ -613,8 +612,8 @@ namespace NGramm
 
                 if (removeComments)
                 {
-                    // Start of // comment
-                    if (ch == '/' && i + 1 < n && code[i + 1] == '/')
+                    // Start of // and # comment
+                    if ((ch == '/' && i + 1 < n && code[i + 1] == '/') || ch == '#')
                     {
                         while (i < n && code[i] != '\n')
                             i++;
@@ -629,15 +628,6 @@ namespace NGramm
                         while (i + 1 < n && !(code[i] == '*' && code[i + 1] == '/'))
                             i++;
                         i += 2; // skip '*/'
-                        result.Append(' ');
-                        continue;
-                    }
-
-                    // Start of # comment
-                    if (ch == '#')
-                    {
-                        while (i < n && code[i] != '\n')
-                            i++;
                         result.Append(' ');
                         continue;
                     }
@@ -700,20 +690,40 @@ namespace NGramm
                     if (current.Length > 0)
                     {
                         result.Add(current.ToString());
-                        current = new StringBuilder();
+                        current.Clear();
                         state = null;
                     }
                     i++;
                     continue;
                 }
-
-                if (")]}}".Contains(ch))
+                
+                if (ch == '\'' || ch =='`' && i > 0 && i < n - 1 && 
+                    char.IsLetter(code[i - 1]) && char.IsLetter(code[i + 1]))
                 {
+                    current.Append(ch);
                     i++;
                     continue;
                 }
-
-                if ("([{".Contains(ch))
+                
+                // if (")]}}".Contains(ch))
+                // {
+                //     i++;
+                //     continue;
+                // }
+                //
+                // if ("([{".Contains(ch))
+                // {
+                //     if (current.Length > 0)
+                //     {
+                //         result.Add(current.ToString());
+                //         current.Clear();
+                //         state = null;
+                //     }
+                //     result.Add(ch.ToString());
+                //     i++;
+                //     continue;
+                // }
+                if (specialExceptions.Contains(ch))
                 {
                     if (current.Length > 0)
                     {
@@ -773,7 +783,7 @@ namespace NGramm
                     continue;
                 }
 
-                if (!specialExceptions.Contains(ch) && !Utils.IsVariableChar(ch) && !Utils.IsDigit(ch))
+                if (!Utils.IsVariableChar(ch) && !Utils.IsDigit(ch))
                 {
                     if (current.Length > 0)
                     {
