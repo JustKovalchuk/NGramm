@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace NGramm
 {
@@ -58,6 +59,102 @@ namespace NGramm
                 int latinScore = text1252.Count(c => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
 
                 return cyrillicScore > latinScore ? win1251 : win1252;
+            }
+        }
+        
+        public static void GetCommentsByExtension(string filename, out CommentDelimiters delimiters, out bool canRecognizeComments)
+        {
+            string ext = Path.GetExtension(filename);
+
+            var commentMap = new Dictionary<string, CommentDelimiters>
+            {
+                { ".py", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>>
+                        {
+                            Tuple.Create("'''", "'''"),
+                            Tuple.Create("\"\"\"", "\"\"\"")
+                        },
+                        SingleLine = new List<string> { "#" }
+                    }
+                },
+                { ".js", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".html", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("<!--", "-->") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".cs", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".c", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".cpp", new CommentDelimiters
+                {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                }
+                },
+                { ".ts", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/**", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".java", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".sql", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "--" }
+                    }
+                },
+                { ".css", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".kotlin", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//" }
+                    }
+                },
+                { ".php", new CommentDelimiters
+                    {
+                        MultiLine = new List<Tuple<string, string>> { Tuple.Create("/*", "*/") },
+                        SingleLine = new List<string> { "//", "#" }
+                    }
+                }
+            };
+
+            if (commentMap.ContainsKey(ext))
+            {
+                delimiters = commentMap[ext];
+                canRecognizeComments = true;
+            }
+            else
+            {
+                delimiters = new CommentDelimiters();
+                canRecognizeComments = false;
             }
         }
     }

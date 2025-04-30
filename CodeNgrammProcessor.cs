@@ -12,6 +12,12 @@ namespace NGramm
     {
         public static bool removeCodeComments;
         public static bool removeCodeStrings;
+        private bool canRemoveComments = true;
+        
+        public bool CanRemoveComments => canRemoveComments;
+
+        private string codeSample = "";
+        private CommentDelimiters _delimiter;
         
         public CodeNgrammProcessor(string filename, ProgressReporter reporter, bool removeComments, bool removeStrings) 
             : base(filename, reporter)
@@ -20,8 +26,19 @@ namespace NGramm
             removeCodeComments = removeComments;
             removeCodeStrings = removeStrings;
         }
+
+        public override async Task Preprocess()
+        {
+            await base.Preprocess();
+            
+            codeSample = File.ReadAllText(_filename, fileEncoding);
+                
+            Utils.GetCommentsByExtension(_filename, out CommentDelimiters delimiter, out bool canRecognizeComments);
+            canRemoveComments = canRecognizeComments;
+            _delimiter = delimiter;
+        }
         
-        public static string RemoveCommentsAndStrings(string code, bool removeComments=true, bool removeStrings=true)
+        private static string RemoveCommentsAndStrings(string code, CommentDelimiters delimiters, bool removeComments=true, bool removeStrings=true)
         {
             var result = new StringBuilder();
             int i = 0;
@@ -29,32 +46,45 @@ namespace NGramm
             char? inString = null;
             bool escape = false;
 
+            Tuple<string, string> activeMultiLine = null;
+            string activeSingleLine = null;
+            
             while (i < n)
             {
                 char ch = code[i];
 
-                if (removeStrings)
+                if (activeSingleLine == null && activeMultiLine == null)
                 {
+                    // Handle string literals
                     if (inString != null)
                     {
                         if (escape)
                         {
                             escape = false;
-                            result.Append(""); // remove escaped char
+                            if (!removeStrings)
+                            {
+                                result.Append(ch);
+                            }
+                            i++; // Skip escaped character
+                            continue;
                         }
-                        else if (ch == '\\')
+                        if (ch == '\\')
                         {
                             escape = true;
-                            result.Append(""); // remove backslash
+                            i++;
+                            continue;
                         }
-                        else if (ch == inString)
+                        if (ch == inString)
                         {
-                            result.Append(inString); // close quote
-                            inString = null;
+                            result.Append(ch);
+                            inString = null; // Close string
+                            i++;
+                            continue;
                         }
-                        else
+                    
+                        if (!removeStrings)
                         {
-                            result.Append(""); // remove inside string
+                            result.Append(ch);
                         }
                         i++;
                         continue;
@@ -64,39 +94,71 @@ namespace NGramm
                     if (ch == '"' || ch == '\'')
                     {
                         inString = ch;
-                        result.Append(ch);
+                        result.Append(ch); // Optionally keep the string start
                         i++;
                         continue;
                     }
                 }
 
-                if (removeComments)
+                if (inString == null)
                 {
-                    var isSlashComment = ch == '/' && i + 1 < n && code[i + 1] == '/';
-                    var isHashtagComment = ch == '#';
-                    // Start of // and # comment
-                    if (isSlashComment || isHashtagComment)
+                    // Handle active single-line comment
+                    if (activeSingleLine != null)
                     {
-                        while (i < n && code[i] != '\n')
-                            i++;
-                        if (isSlashComment)
-                            result.Append(" //");
-                        else if (isHashtagComment)
-                            result.Append(" #");
-                        else
-                            result.Append(" ");
+                        if (ch == '\n')
+                        {
+                            activeSingleLine = null;
+                            result.Append(' ');
+                        }
+                        i++;
                         continue;
                     }
 
-                    // Start of /* */ comment
-                    if (ch == '/' && i + 1 < n && code[i + 1] == '*')
+                    // Handle active multi-line comment
+                    if (activeMultiLine != null)
                     {
-                        i += 2;
-                        while (i + 1 < n && !(code[i] == '*' && code[i + 1] == '/'))
+                        var (start, end) = activeMultiLine;
+                        if (i + end.Length <= n && code.Substring(i, end.Length) == end)
+                        {
+                            i += end.Length;
+                            result.Append(end);
+                            activeMultiLine = null;
+                        }
+                        else
+                        {
                             i++;
-                        i += 2; // skip '*/'
-                        result.Append(" /* */");
+                        }
                         continue;
+                    }
+                    
+                    if (removeComments)
+                    {
+                        string matchedSingle = delimiters.SingleLine
+                            .Where(sym => i + sym.Length <= n && code.Substring(i, sym.Length) == sym)
+                            .OrderBy(sym => sym.Length)
+                            .FirstOrDefault();
+
+                        if (matchedSingle != null)
+                        {
+                            activeSingleLine = matchedSingle;
+                            result.Append(activeSingleLine);
+                            i += matchedSingle.Length;
+                            continue;
+                        }
+
+                        // Check for new multi-line comment
+                        Tuple<string, string> matchedMulti = delimiters.MultiLine
+                            .Where(pair => i + pair.Item1.Length <= n && code.Substring(i, pair.Item1.Length) == pair.Item1)
+                            .OrderBy(pair => pair.Item1.Length)
+                            .FirstOrDefault();
+
+                        if (matchedMulti != null)
+                        {
+                            activeMultiLine = matchedMulti;
+                            result.Append(activeMultiLine.Item1);
+                            i += matchedMulti.Item1.Length;
+                            continue;
+                        }
                     }
                 }
 
@@ -135,10 +197,10 @@ namespace NGramm
         //     return code;
         // }
         
-        public static List<string> TokenizeCode(string code, bool removeComments=true, bool removeStrings=true)
+        private static List<string> TokenizeCode(string code, CommentDelimiters delimiter, bool removeComments=true, bool removeStrings=true)
         {
             code = code.Replace("\t", " ");
-            code = RemoveCommentsAndStrings(code, removeComments, removeStrings); // reuse earlier C# version
+            code = RemoveCommentsAndStrings(code, delimiter, removeComments, removeStrings); // reuse earlier C# version
             var result = new List<string>();
             int i = 0;
             int n = code.Length;
@@ -165,7 +227,7 @@ namespace NGramm
                 }
                 
                 if ((ch == '\'' || ch =='`') && i > 0 && i < n - 1 && 
-                    char.IsLetter(code[i - 1]) && char.IsLetter(code[i + 1]))
+                    Utils.IsVariableChar(code[i - 1]) && Utils.IsVariableChar(code[i + 1]))
                 {
                     current.Append(ch);
                     i++;
@@ -371,9 +433,8 @@ namespace NGramm
             {
                 progressReporter.StartNewOperation($"Обчислення словесних н-грамм (для програмного коду) від 1 до {n}");
                 progressReporter.MoveProgress();
-
-                string codeSample = File.ReadAllText(_filename, fileEncoding);
-                var tokens = TokenizeCode(codeSample, removeCodeComments, removeCodeStrings);
+                
+                var tokens = TokenizeCode(codeSample, _delimiter, removeCodeComments, removeCodeStrings);
                 var words = tokens.ToArray();
                 CountDesiredVariables = words.Length;
                 ClearAllNGrammContainers();
@@ -392,12 +453,11 @@ namespace NGramm
 
         public override string[] WordsNotStatic()
         {
-            string codeSample = File.ReadAllText(_filename, fileEncoding);
-            var tokens = TokenizeCode(codeSample, removeCodeComments, removeCodeStrings);
+            var tokens = TokenizeCode(codeSample, _delimiter, removeCodeComments, removeCodeStrings);
             var words = tokens.ToArray();
             return words;
         }
         
-        public override int GetWordsCount() => TokenizeCode(File.ReadAllText(_filename, fileEncoding), removeCodeComments, removeCodeStrings).ToArray().Length;
+        public override int GetWordsCount() => TokenizeCode(codeSample, _delimiter, removeCodeComments, removeCodeStrings).ToArray().Length;
     }
 }

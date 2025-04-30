@@ -1,6 +1,7 @@
 ﻿using NGramm.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,8 @@ namespace NGramm
         // uncomment to see console output
         // [DllImport("kernel32.dll")]
         // private static extern bool AllocConsole();
-        
+
+        bool _isProgramText = false;
         NgrammProcessor processor;
         string filename;
         NGrammContainer unified;
@@ -25,9 +27,6 @@ namespace NGramm
         int IndexPorah = -1;
         readonly Stopwatch stopwatch = new Stopwatch();
         readonly Action<SendOrPostCallback, object> SyncContext;
-
-        private bool removeComments;
-        private bool removeStrings;
 
         private readonly NGramListSettings nGramListSettings = new NGramListSettings();
 
@@ -57,6 +56,39 @@ namespace NGramm
             // Console.WriteLine("Console is active");
         }
 
+        private void EditRegisterCheckbox()
+        {
+            var selectedtab = (Tabs)tabControl1.SelectedIndex;
+            
+            if (selectedtab == Tabs.Words && _isProgramText)
+            {
+                IgnoreRegisterChecbox.Enabled = false;
+                IgnoreRegisterChecbox.Hide();
+            }
+            else
+            {
+                IgnoreRegisterChecbox.Enabled = true;
+                IgnoreRegisterChecbox.Show();
+            }
+        }
+
+        private void EditRemoveCommentsCheckbox()
+        {
+            if (!(processor is CodeNgrammProcessor))
+                return;
+            
+            if (((CodeNgrammProcessor)processor).CanRemoveComments)
+            {
+                checkBoxComments.Enabled = true;
+                checkBoxComments.Show();
+            }
+            else
+            {
+                checkBoxComments.Enabled = false;
+                checkBoxComments.Hide();
+            }
+        }
+
         private async Task OpenFile(bool isProgramText=false)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -81,6 +113,12 @@ namespace NGramm
                 groupBox1.Enabled = false;
                 порахуватиToolStripMenuItem.Enabled = false;
             }
+            _isProgramText = isProgramText;
+            EditRegisterCheckbox();
+            
+            if (isProgramText)
+                if (processor is CodeNgrammProcessor && !((CodeNgrammProcessor)processor).CanRemoveComments)
+                    MessageBox.Show("Програма не підтримує коментарі даного типу файлу!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
         private void PrepareMeCabResources()
@@ -987,6 +1025,8 @@ namespace NGramm
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             nGramListSettings.SelectedTab = (Tabs)tabControl1.SelectedIndex;
+
+            EditRegisterCheckbox();
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -1014,6 +1054,7 @@ namespace NGramm
             codeWordsPanel.Enabled = true;
 
             await OpenFile(isProgramText: true);
+            EditRemoveCommentsCheckbox();
         }
     }
 }

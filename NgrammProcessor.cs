@@ -54,7 +54,6 @@ namespace NGramm
 
         public NgrammProcessor(string filename, ProgressReporter reporter)
         {
-
             _filename = filename;
             progressReporter = reporter;
             CountDesiredVariables = 0;
@@ -62,7 +61,7 @@ namespace NGramm
 
         private static bool IsEndSign(char ch) => endsigns.Contains(ch);
 
-        public async Task Preprocess()
+        public virtual async Task Preprocess()
         {
             await Task.Run(() =>
             {
@@ -70,9 +69,12 @@ namespace NGramm
 
                 progressReporter.StartNewOperation("Ініціалізація");
                 progressReporter.MoveProgress(5);
+                
                 rawTextorg = reg_exp.Replace(File.ReadAllText(_filename), " ").Trim().Replace("\r", "");
                 fileEncoding = Utils.GetEncoding(_filename);
+                
                 progressReporter.MoveProgress(5);
+                
                 var _raw = new StringBuilder();
                 var _uns = new StringBuilder();
                 var _ends = new StringBuilder();
