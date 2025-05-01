@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeNgrammProcessor.cs" />
+    <Compile Include="CommentDelimiters.cs" />
     <Compile Include="ListViewItemComparer.cs" />
     <Compile Include="Models\NGramListSettings.cs" />
     <Compile Include="Models\Tabs.cs" />
