@@ -8,6 +8,23 @@ namespace NGramm
 {
     public class Utils
     {
+        public static void ClearDirectoryFiles(string targetDirectory)
+        {
+            try
+            {
+                foreach (string file in Directory.GetFiles(targetDirectory))
+                {
+                    File.Delete(file);
+                }
+
+                Console.WriteLine("All files deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting files: {ex.Message}");
+            }
+        }
+        
         public static bool IsVariableChar(char ch)
         {
             return ch == '_' || char.IsLetterOrDigit(ch);

@@ -12,8 +12,6 @@ namespace NGramm
         public Dictionary<string, int> ngram_reps_i = new Dictionary<string, int>();
         public int count = 0;
         public int absCount = 0;
-        public string source;
-        public string source_unsigned;
 
         public NGrammContainer(int n)
         {
@@ -33,31 +31,36 @@ namespace NGramm
             Process();
         }
 
-        public void Add(string ng)
+        public void Add(string ngram)
         {
             count++;
-            if (ngrams.ContainsKey(ng))
+            if (ngrams.ContainsKey(ngram))
             {
-                ngrams[ng].count++;
+                ngrams[ngram].count++;
             }
             else
             {
-                ngrams.Add(ng, new NGramm());
-                ngrams[ng].text = ng;
-                ngrams[ng].count = 1;
+                ngrams.Add(ngram, new NGramm());
+                ngrams[ngram].text = ngram;
+                ngrams[ngram].count = 1;
                 absCount++;
             }
         }
-
-        public void Add(string ng, int ct)
+        
+        public void Add(string ngram, int ngramCount)
         {
             count++;
-
-            ngrams.Add(ng, new NGramm());
-            ngrams[ng].text = ng;
-            ngrams[ng].count = ct;
-            absCount += ct;
-
+            if (ngrams.ContainsKey(ngram))
+            {
+                ngrams[ngram].count += ngramCount;
+            }
+            else
+            {
+                ngrams.Add(ngram, new NGramm());
+                ngrams[ngram].text = ngram;
+                ngrams[ngram].count = ngramCount;
+                absCount += ngramCount;
+            }
         }
 
         public void Process()
@@ -85,7 +88,9 @@ namespace NGramm
 
         public Dictionary<string, int> GetNgrams(int countFilter = 0)
         {
-            return ngrams.Where(n => n.Value.count >= countFilter).ToDictionary(n => n.Key, n => n.Value.count);
+            return ngrams.
+                Where(n => n.Value.count >= countFilter).
+                ToDictionary(n => n.Key, n => n.Value.count);
         }
     }
 }

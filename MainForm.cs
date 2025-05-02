@@ -16,12 +16,11 @@ namespace NGramm
     public partial class MainForm : Form
     {
         // uncomment to see console output
-        // [DllImport("kernel32.dll")]
-        // private static extern bool AllocConsole();
+        [DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
 
         bool _isProgramText = false;
-        NgrammProcessor processor;
-        string filename;
+        BasicNgrammProcessor processor;
         NGrammContainer unified;
         readonly ProgressReporter reporter;
         int IndexPorah = -1;
@@ -36,7 +35,6 @@ namespace NGramm
             numericUpDown1.Maximum = PerformanceSettings.MaxCores;
             numericUpDown1.Value = PerformanceSettings.MaxCores;
             numericUpDown2.Value = PerformanceSettings.MinNGrammCount;
-            EndSignsList.Text = new string(NgrammProcessor.endsigns.ToArray());
             progressBar1.Minimum = 0;
             progressBar1.Maximum = 100;
             tabControl1.SelectTab(tabPage2);
@@ -52,8 +50,8 @@ namespace NGramm
             PrepareJiebaResources();
             
             // uncomment to see console output
-            // AllocConsole();
-            // Console.WriteLine("Console is active");
+            AllocConsole();
+            Console.WriteLine("Console is active");
         }
 
         private void EditRegisterCheckbox()
@@ -74,10 +72,10 @@ namespace NGramm
 
         private void EditRemoveCommentsCheckbox()
         {
-            if (!(processor is CodeNgrammProcessor))
+            if (!(processor is ComplexNgrammProcessor))
                 return;
             
-            if (((CodeNgrammProcessor)processor).CanRemoveComments)
+            if (((ComplexNgrammProcessor)processor).CanRemoveComments)
             {
                 checkBoxComments.Enabled = true;
                 checkBoxComments.Show();
@@ -94,11 +92,14 @@ namespace NGramm
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 if (isProgramText)
-                    processor = new CodeNgrammProcessor(openFileDialog1.FileName, reporter, checkBoxComments.Checked, checkBoxStrings.Checked);
+                    processor = new ComplexNgrammProcessor(openFileDialog1.FileName, reporter, checkBoxComments.Checked, checkBoxStrings.Checked);
+                    // processor = new CodeNaturalNgrammProcessor(openFileDialog1.FileName, reporter);
                 else
-                    processor = new NgrammProcessor(openFileDialog1.FileName, reporter);
-                filename = Path.GetFileName(openFileDialog1.FileName);
-                await processor.Preprocess();
+                    processor = new NaturalNgrammProcessor(openFileDialog1.FileName, reporter);
+                
+                EndSignsList.Text = new string(processor.Endsigns.ToArray());
+                
+                await processor.PreprocessAsync();
                 var textType = isProgramText ? "програмний" : "природний";
                 toolStripStatusLabel1.Text = $"Текст ({textType}): " + Path.GetFileName(openFileDialog1.FileName);
                 еуіеToolStripMenuItem.Text = $"L={File.ReadAllText(openFileDialog1.FileName).Length}";
@@ -117,7 +118,7 @@ namespace NGramm
             EditRegisterCheckbox();
             
             if (isProgramText)
-                if (processor is CodeNgrammProcessor && !((CodeNgrammProcessor)processor).CanRemoveComments)
+                if (processor is ComplexNgrammProcessor && !((ComplexNgrammProcessor)processor).CanRemoveComments)
                     MessageBox.Show("Програма не підтримує коментарі даного типу файлу!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
@@ -221,7 +222,6 @@ namespace NGramm
 
         private void Reporter_ProgressChanged(object sender, int e)
         {
-
             RunOnUiContext(() =>
             {
                 if (e > progressBar1.Maximum || e < progressBar1.Minimum) return;
@@ -453,8 +453,7 @@ namespace NGramm
                     int i;
                     for (i = 0; i < ngrams.Count; i++)
                     {
-                        wr.WriteLine((i + 1).ToString() + "\t" + ngrams.ElementAt(i).absCount.ToString() + "\t" +
-                                     ngrams.ElementAt(i).count.ToString());
+                        wr.WriteLine((i + 1).ToString() + "\t" + ngrams.ElementAt(i).absCount.ToString() + "\t" + ngrams.ElementAt(i).count.ToString());
                     }
 
                     wr.Close();
@@ -832,7 +831,9 @@ namespace NGramm
 
         private void EndSignsChanged(object sender, EventArgs e)
         {
-            NgrammProcessor.endsigns = new HashSet<char>(EndSignsList.Text.ToCharArray());
+            if (!(processor is NaturalNgrammProcessor)) return;
+            
+            ((NaturalNgrammProcessor)processor).Endsigns = new HashSet<char>(EndSignsList.Text.ToCharArray());
         }
 
         private void button23_Click(object sender, EventArgs e) //Gips
@@ -844,9 +845,8 @@ namespace NGramm
         private async void порахуватиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IReadOnlyCollection<NGrammContainer> ngrams = new List<NGrammContainer>();
-            NgrammProcessor.ignore_case = IgnoreRegisterChecbox.Checked;
-            CodeNgrammProcessor.removeCodeComments = checkBoxComments.Checked;
-            CodeNgrammProcessor.removeCodeStrings = checkBoxStrings.Checked;
+            BasicNgrammProcessor.ignoreCase = IgnoreRegisterChecbox.Checked;
+            // processor.SetIgnoreCase(IgnoreRegisterChecbox.Checked);
             
             var sizeChangeTask = Task.Run(() =>
             {
@@ -857,24 +857,24 @@ namespace NGramm
             
             if (tabControl1.SelectedIndex == 0)
             {
-                NgrammProcessor.process_spaces = LiteralCountSpaces.Checked;
+                BasicNgrammProcessor.process_spaces = LiteralCountSpaces.Checked;
                 await processor.ProcessLiteralNGramms(nPoryadok);
                 ngrams = processor.GetLiteralNgrams();
 
             }
             else if (tabControl1.SelectedIndex == 1)
             {
-                NgrammProcessor.process_spaces = SymbolsCountSpaces.Checked;
-                NgrammProcessor.consequtive_spaces = consequtiveSpaces.Checked;
-                NgrammProcessor.show_NBS = ShowNPS.Checked;
+                BasicNgrammProcessor.process_spaces = SymbolsCountSpaces.Checked;
+                NaturalNgrammProcessor.consequtive_spaces = consequtiveSpaces.Checked;
+                NaturalNgrammProcessor.show_NBS = ShowNPS.Checked;
                 await processor.ProcessSymbolNGramms(nPoryadok);
                 ngrams = processor.GetSymbolNgrams();
             }
             else if (tabControl1.SelectedIndex == 2)
             {
-                NgrammProcessor.process_spaces = SymbolsCountSpaces.Checked;
-                CodeNgrammProcessor.removeCodeComments = checkBoxComments.Checked;
-                CodeNgrammProcessor.removeCodeStrings = checkBoxStrings.Checked;
+                BasicNgrammProcessor.process_spaces = SymbolsCountSpaces.Checked;
+                ComplexNgrammProcessor.removeCodeComments = checkBoxComments.Checked;
+                ComplexNgrammProcessor.removeCodeStrings = checkBoxStrings.Checked;
                 await processor.ProcessWordNGramms(nPoryadok);
                 ngrams = processor.GetWordsNgrams();
             }
@@ -991,7 +991,7 @@ namespace NGramm
 
         private void SpecialSymbolsCount_CheckedChanged(object sender, EventArgs e)
         {
-            NgrammProcessor.ignore_punctuation = !SpecialSymbolsCount.Checked;
+            BasicNgrammProcessor.ignorePunctuation = !SpecialSymbolsCount.Checked;
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)

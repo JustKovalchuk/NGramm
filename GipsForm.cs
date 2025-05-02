@@ -12,20 +12,20 @@ namespace NGramm
     {
         private int tabIndex;
         private readonly int pageSize;
-        private int Ngramm;
-        private readonly NgrammProcessor processor;
+        private int ngrammLength;
+        private readonly BasicNgrammProcessor processor;
         private Dictionary<int, double> hips = new Dictionary<int, double>();
         private Dictionary<int, double> hipssq = new Dictionary<int, double>();
         bool lnx;
         bool lny;
 
-        public GipsForm(int tabIndex, int pageSize, int N, NgrammProcessor processor)
+        public GipsForm(int tabIndex, int pageSize, int N, BasicNgrammProcessor processor)
         {
             InitializeComponent();
             chart1.Series.Clear();
             this.tabIndex = tabIndex;
             this.pageSize = pageSize;
-            Ngramm = N;
+            ngrammLength = N;
             this.processor = processor;
             chart1.Series.Add("Heaps");
 
@@ -33,7 +33,7 @@ namespace NGramm
             textBox6.Text = pageSize.ToString();
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private async void StartButtonClick(object sender, EventArgs e)
         {
             label6.Text = "Підрахунок...";
             int step = int.Parse(textBox1.Text);
@@ -41,12 +41,11 @@ namespace NGramm
             int initialWindowSize = int.Parse(textBox2.Text);
             int start_pos = int.Parse(textBox4.Text);
             int end_pos = int.Parse(textBox6.Text);
-            List<int> lst = new List<int>();
-            hips.Clear();
-            hipssq.Clear();
             bool fixed_window = checkBox1.Checked;
             bool fixedWindownotav = checkBox3.Checked;
             bool fixed_pos = checkBox2.Checked;
+            hips.Clear();
+            hipssq.Clear();
 
             if (fixed_window || fixedWindownotav)
             {
@@ -60,13 +59,13 @@ namespace NGramm
                 switch (tabIndex)
                 {
                     case 0:
-                        maxWindow = processor.unsignedTextorg.Substring(start_pos, end_pos - start_pos).Length;
+                        maxWindow = processor.GetLiteralSubstring(start_pos, end_pos - start_pos).Length;
                         break;
                     case 1:
-                        maxWindow = processor.rawTextorg.Substring(start_pos, end_pos - start_pos).Length;
+                        maxWindow = processor.GetSymbolsSubstring(start_pos, end_pos - start_pos).Length;
                         break;
                     case 2:
-                        words = processor.WordsNotStatic();
+                        words = processor.Words();
                         maxWindow = words.Length;
                         break;
                 }
@@ -88,8 +87,8 @@ namespace NGramm
                     incPerStep = 90 / sizes;
                 }
 
-                processor.progressReporter.StartNewOperation("Обрахунок гіпс");
-                processor.progressReporter.MoveProgress(5);
+                processor.MyProgressReporter.StartNewOperation("Обрахунок гіпс");
+                processor.MyProgressReporter.MoveProgress(5);
                 var ngramsInWindows = Partitioner.Create(initialWindowSize, maxWindow + 1, window_grow)
                     .AsParallel()
                     .WithDegreeOfParallelism(PerformanceSettings.Cores)
@@ -100,33 +99,34 @@ namespace NGramm
                         switch (tabIndex)
                         {
                             case 0:
-                                res = (part.Item1, processor.ProcessLiteralNGrammsInWindow(Ngramm, part.Item1, step, start_pos, ff)
+                                res = (part.Item1, processor.ProcessLiteralNGrammsInWindow(ngrammLength, part.Item1, step, start_pos, ff)
                                 .Select(p => p.count).ToArray());
                                 break;
                             case 1:
-                                res = (part.Item1, processor.ProcessSymbolNGrammsInWindow(Ngramm, part.Item1, step, start_pos, ff)
+                                res = (part.Item1, processor.ProcessSymbolNGrammsInWindow(ngrammLength, part.Item1, step, start_pos, ff)
                                 .Select(p => p.count).ToArray());
                                 break;
                             case 2:
                                 ff = fixed_pos ? part.Item1 : maxWindow;
-                                res = (part.Item1, processor.ProcessWordNGrammsInWindow(words, Ngramm, part.Item1, step, start_pos, ff)
+                                res = (part.Item1, processor.ProcessWordNGrammsInWindow(words, ngrammLength, part.Item1, step, start_pos, ff)
                                 .Select(p => p.count).ToArray());
                                 break;
                         }
+                        // Console.WriteLine($"Hips calculate: words_count={words.Length}; res1={res.Item1} res2={res.Item2.Length}");
 
                         if (rep && (part.Item1 - initialWindowSize) / window_grow % stepsPerProg == 0)
                         {
-                            processor.progressReporter.MoveProgress();
+                            processor.MyProgressReporter.MoveProgress();
                         }
                         else
                         {
-                            processor.progressReporter.MoveProgress(incPerStep);
+                            processor.MyProgressReporter.MoveProgress(incPerStep);
                         }
                         return res;
                     }).ToArray();
 
                 ngramsInWindows = ngramsInWindows.OrderBy(v => v.Item1).ToArray();
-                processor.progressReporter.Finish();
+                processor.MyProgressReporter.Finish();
 
                 if (fixed_window)
                 {
@@ -154,6 +154,13 @@ namespace NGramm
                         }
 
                         double lstCount = wn.Item2.Length;
+                        var tmp1 = sum;
+                        var tmp2 = sq_sum;
+                        var tmp1_1 = sum / lstCount;
+                        var tmp2_1 = sq_sum / lstCount;
+                        var tmp3 = wn.Item1;
+                        
+                        Console.WriteLine($"Hips calculate: tmp1={tmp1}; tmp2={tmp2} tmp1_1={tmp1_1} tmp2_1={tmp2_1} tmp3={tmp3} lstCount={lstCount}");
                         hips.Add(wn.Item1, sum / lstCount);
                         hipssq.Add(wn.Item1, sq_sum / lstCount);
                     }
@@ -177,6 +184,7 @@ namespace NGramm
                 ListViewItem nli = new ListViewItem(item.ToString());
                 nli.SubItems.Add(hips[item].ToString());
                 nli.SubItems.Add(Math.Sqrt(hipssq[item] - hips[item] * hips[item]).ToString());
+                Console.WriteLine($"1={item.ToString()};\n2={hips[item].ToString()};\n3={Math.Sqrt(hipssq[item] - hips[item] * hips[item]).ToString()}\n\n");
                 listView1.Items.Add(nli);
             }
             drawChart();

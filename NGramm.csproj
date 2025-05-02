@@ -119,11 +119,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeNgrammProcessor.cs" />
+    <Compile Include="TokenizerUtils.cs" />
     <Compile Include="CommentDelimiters.cs" />
     <Compile Include="ListViewItemComparer.cs" />
     <Compile Include="Models\NGramListSettings.cs" />
     <Compile Include="Models\Tabs.cs" />
+    <Compile Include="NgramProcess\BasicNgrammProcessor.cs" />
+    <Compile Include="NgramProcess\CodeNaturalNgrammProcessor.cs" />
+    <Compile Include="NgramProcess\ComplexNgrammProcessor.cs" />
+    <Compile Include="NgramProcess\NGramm.cs" />
+    <Compile Include="NgramProcess\NGrammContainer.cs" />
+    <Compile Include="NgramProcess\NaturalNgrammProcessor.cs" />
     <Compile Include="ProgressReporter.cs" />
     <Compile Include="PerformanceSettings.cs" />
     <Compile Include="GipsForm.cs">
@@ -145,9 +151,6 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NGramm.cs" />
-    <Compile Include="NGrammContainer.cs" />
-    <Compile Include="NgrammProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleLogger.cs" />
@@ -224,6 +227,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="temp\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
