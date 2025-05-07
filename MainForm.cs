@@ -48,7 +48,7 @@ namespace NGramm
 
             PrepareMeCabResources();
             PrepareJiebaResources();
-            
+
             // // uncomment to see console output
             // AllocConsole();
             // Console.WriteLine("Console is active");
@@ -1031,6 +1031,7 @@ namespace NGramm
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            OperationNameLabel.Text = "";
         }
 
 

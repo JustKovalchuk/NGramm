@@ -108,7 +108,7 @@ namespace NGramm
         {
             return Task.Run(() =>
             {
-                MyProgressReporter?.StartNewOperation($"Обчислення словесних н-грамм від 1 до {n}");
+                MyProgressReporter?.StartNewOperation($"Обчислення лексичних n-грам від 1 до {n}");
                 MyProgressReporter?.MoveProgress();
             
                 var words = Words();

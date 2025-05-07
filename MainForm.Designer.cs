@@ -697,10 +697,11 @@
             // OperationNameLabel
             // 
             this.OperationNameLabel.AutoSize = true;
-            this.OperationNameLabel.Location = new System.Drawing.Point(14, 477);
+            this.OperationNameLabel.Location = new System.Drawing.Point(14, 490);
             this.OperationNameLabel.Name = "OperationNameLabel";
-            this.OperationNameLabel.Size = new System.Drawing.Size(0, 13);
+            this.OperationNameLabel.Size = new System.Drawing.Size(107, 13);
             this.OperationNameLabel.TabIndex = 14;
+            this.OperationNameLabel.Text = "OperationNameLabel";
             // 
             // MainForm
             // 
@@ -724,8 +725,8 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "NGramm v4";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.Closed += new System.EventHandler(this.MyForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox10.ResumeLayout(false);
