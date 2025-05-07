@@ -15,9 +15,9 @@ namespace NGramm
 {
     public partial class MainForm : Form
     {
-        // uncomment to see console output
-        [DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
+        // // uncomment to see console output
+        // [DllImport("kernel32.dll")]
+        // private static extern bool AllocConsole();
 
         bool _isProgramText = false;
         BasicNgrammProcessor processor;
@@ -49,9 +49,9 @@ namespace NGramm
             PrepareMeCabResources();
             PrepareJiebaResources();
             
-            // uncomment to see console output
-            AllocConsole();
-            Console.WriteLine("Console is active");
+            // // uncomment to see console output
+            // AllocConsole();
+            // Console.WriteLine("Console is active");
         }
 
         private void EditRegisterCheckbox()
@@ -1055,6 +1055,17 @@ namespace NGramm
 
             await OpenFile(isProgramText: true);
             EditRemoveCommentsCheckbox();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void MyForm_FormClosing(object sender, EventArgs e)
+        {
+            // DialogResult result = MessageBox.Show("Are you sure you want to close?", "Confirm", MessageBoxButtons.YesNo);
+            Utils.ClearDirectoryFiles("temp");
         }
     }
 }

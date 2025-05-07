@@ -118,6 +118,7 @@
             this.menuStrip1.Size = new System.Drawing.Size(443, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // файлToolStripMenuItem
             // 
@@ -722,8 +723,9 @@
             this.MinimumSize = new System.Drawing.Size(454, 560);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "NGramm v3";
+            this.Text = "NGramm v4";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Closed += new System.EventHandler(this.MyForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.groupBox10.ResumeLayout(false);

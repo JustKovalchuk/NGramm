@@ -3,34 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using System.Text;
-
-// 1. Гісп чи працює (substring?)
-// 2. Чи об'єднює як треба n-грами
-// 3. ProgressBar?
 
 namespace NGramm
 {
-    public enum TextType
-    {
-        NaturalText,
-        CodeText
-    }
-
-    public class TextPieceToProcess
-    {
-        public string Text { get; set; }
-        public TextType TextType { get; set; }
-        public bool IsComment { get; set; } = false;
-        public bool IsString { get; set; } = false;
-    }
-
     public class CommentNgramProcessor : NaturalNgrammProcessor
     {
         public CommentNgramProcessor(string filename, ProgressReporter reporter): base(filename, reporter) { }
@@ -75,61 +51,33 @@ namespace NGramm
         public override async Task PreprocessAsync()
         {
             var text = File.ReadAllText(Filename).Trim().Replace("\r", "");
-            text = TokenizerUtils.RemoveStrings(text, _delimiter, out List<string> strings, false);
-            text = TokenizerUtils.RemoveComments(text, _delimiter, out List<string> comments, false);
-            
-            List<TextPieceToProcess> textPieces = new List<TextPieceToProcess>
-            {
-                new TextPieceToProcess {Text=text, TextType=TextType.CodeText }
-            };
-            
-            foreach (var strText in strings)
-            {
-                textPieces.Add(new TextPieceToProcess { Text=strText, TextType=TextType.NaturalText, IsString=true });
-            }
-            foreach (var commentText in comments)
-            {
-                textPieces.Add(new TextPieceToProcess { Text=commentText, TextType=TextType.NaturalText, IsComment=true });
-            }
+            List<CodeBlock> codeBlocks = TokenizerUtils.ParseCodeSegments(text, _delimiter);
+            codeBlocks = TokenizerUtils.CleanBlocks(codeBlocks);
 
             int i =  1;
             Directory.CreateDirectory(tempDirName);
             Utils.ClearDirectoryFiles(tempDirName);
-            foreach (var textPiece in textPieces)
+            foreach (var codeBlock in codeBlocks)
             {
                 string extension = ".txt";
-                if (textPiece.TextType == TextType.CodeText)
+                if (codeBlock.Type == CodeBlockType.CodeText)
                 { 
                     extension = Path.GetExtension(Filename);
                 }
+
+                string textPieceFilename = $"temp/{i}_output_{codeBlock.Type.ToString()}{extension}";
                 
-                string textPieceFilename = $"temp/{i}_output_{textPiece.TextType.ToString()}{extension}";
-                if (textPiece.TextType == TextType.NaturalText)
-                {
-                    if (textPiece.IsComment)
-                        textPieceFilename = $"temp/{i}_output_comment_{textPiece.TextType.ToString()}{extension}";
-                    else if (textPiece.IsString)
-                        textPieceFilename = $"temp/{i}_output_string_{textPiece.TextType.ToString()}{extension}";
-                    else
-                        textPieceFilename = $"temp/{i}_output_unknown_{textPiece.TextType.ToString()}{extension}";
-                }
-                
-                File.WriteAllText(textPieceFilename, textPiece.Text);
+                File.WriteAllText(textPieceFilename, codeBlock.Content);
                 Console.WriteLine("Wrote file!" + textPieceFilename);
 
-                if (textPiece.TextType == TextType.CodeText)
-                {
+                if (codeBlock.Type == CodeBlockType.CodeText)
                     processors.Add(new CodeNaturalNgrammProcessor(textPieceFilename, null));
-                }
-                else if (textPiece.TextType == TextType.NaturalText)
-                {
-                    if (textPiece.IsComment)
-                        processors.Add(new CommentNgramProcessor(textPieceFilename, null));
-                    else if (textPiece.IsString)
-                        processors.Add(new StringNgramProcessor(textPieceFilename, null));
-                    else
-                        processors.Add(new NaturalNgrammProcessor(textPieceFilename, null));
-                }
+                else if (codeBlock.Type == CodeBlockType.CommentText)
+                    processors.Add(new CommentNgramProcessor(textPieceFilename, null));
+                else if (codeBlock.Type == CodeBlockType.StringText)
+                    processors.Add(new StringNgramProcessor(textPieceFilename, null));
+                else
+                    processors.Add(new NaturalNgrammProcessor(textPieceFilename, null));
                 i++;
             }
             

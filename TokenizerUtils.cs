@@ -10,6 +10,30 @@ using NMeCab;
 
 namespace NGramm
 {
+    public enum CodeBlockType
+    {
+        CodeText,
+        StringText,
+        CommentText
+    }
+        
+    public class CodeBlock
+    {
+        public CodeBlockType Type { get; } // "code", "string", "comment"
+        public string Content { get; set; }
+
+        public CodeBlock(CodeBlockType type, string content)
+        {
+            Type = type;
+            Content = content;
+        }
+
+        public override string ToString()
+        {
+            return $"{Type}: {Content}";
+        }
+    }
+    
     public class TokenizerUtils
     {
         private static readonly Regex _startSpaces = new Regex(@"^\s+", RegexOptions.Compiled | RegexOptions.Multiline);
@@ -26,251 +50,164 @@ namespace NGramm
         };
         
         #region CodeTextTokenize
-
-        public static string RemoveStrings(string code, CommentDelimiters delimiters, out List<string> strings, bool removeStrings = true)
+        
+        public static List<CodeBlock> ParseCodeSegments(string code, CommentDelimiters delimiters)
         {
-            var result = new StringBuilder();
+            var segments = new List<CodeBlock>();
+            var current = new StringBuilder();
+            CodeBlockType type = CodeBlockType.CodeText;
+
             int i = 0;
             int n = code.Length;
-            strings = new List<string>();
-
-            string activeMultiLineEnd = null;
+            bool inString = false;
             bool inSingleLineComment = false;
             bool inMultiLineComment = false;
-            bool inString = false;
-            char stringChar = '\0'; // Either ' or "
+            char stringChar = '\0';
             bool escape = false;
-            string temp = "";
+            string multiLineEnd = "";
+
             while (i < n)
             {
                 char ch = code[i];
-                if (!inString)
-                {
-                    if (inSingleLineComment)
-                    {
-                        result.Append(ch);
-                        if (ch == '\n')
-                        {
-                            inSingleLineComment = false;
-                        }
-                        i++;
-                        continue;
-                    }
-                    else
-                    {
-                        var matchedSingle = delimiters.SingleLine
-                            .FirstOrDefault(sym => i + sym.Length <= n && code.Substring(i, sym.Length) == sym);
-                        if (matchedSingle != null)
-                        {
-                            inSingleLineComment = true;
-                            result.Append(matchedSingle);
-                            i += matchedSingle.Length;
-                            continue;
-                        }
-                    }
-
-                    if (inMultiLineComment)
-                    {
-                        result.Append(ch);
-                        if (i + activeMultiLineEnd.Length <= n && code.Substring(i, activeMultiLineEnd.Length) == activeMultiLineEnd)
-                        {
-                            result.Append(activeMultiLineEnd[1]);
-                            i += activeMultiLineEnd.Length;
-                            inMultiLineComment = false;
-                            continue;
-                        }
-                        i++;
-                        continue;
-                    }
-                    else
-                    {
-                        var matchedMulti = delimiters.MultiLine
-                            .FirstOrDefault(pair => i + pair.Item1.Length <= n && code.Substring(i, pair.Item1.Length) == pair.Item1);
-                        if (matchedMulti != null)
-                        {
-                            inMultiLineComment = true;
-                            activeMultiLineEnd = matchedMulti.Item2;
-                            result.Append(matchedMulti.Item1);
-                            i += matchedMulti.Item1.Length;
-                            continue;
-                        }
-                    }
-                }
-
 
                 if (inString)
                 {
                     if (escape)
                     {
-                        if (!removeStrings) temp+=code[i];
+                        current.Append(ch);
                         escape = false;
                         i++;
+                        continue;
                     }
-                    else if (ch == '\\')
+
+                    if (ch == '\\')
                     {
+                        current.Append(ch);
                         escape = true;
                         i++;
+                        continue;
                     }
-                    else if (ch == stringChar)
+
+                    if (ch == stringChar)
                     {
+                        segments.Add(new CodeBlock(CodeBlockType.StringText, current.ToString()));
+                        current.Clear();
+                        type = CodeBlockType.CodeText;
+                        segments.Add(new CodeBlock(CodeBlockType.CodeText, ch.ToString()));
                         inString = false;
-                        result.Append(' ');
-                        result.Append(stringChar); // Append closing quote
-                        strings.Add(temp);
-                        temp = "";
-                        i++;
                     }
                     else
                     {
-                        if (removeStrings) i++; 
-                        else
-                        {
-                            temp+=code[i];
-                            i++;
-                        }
-                    }
-                    continue;
-                }
-                else if (ch == '\'' || ch == '\"')
-                {
-                    inString = true;
-                    stringChar = ch;
-                    result.Append(ch); // Append opening quote
-                    i++;
-                    continue;
-                }
-                result.Append(ch);
-                i++;
-            }
-            
-            return result.ToString();
-        }
-        public static string RemoveComments(string code, CommentDelimiters delimiters, out List<string> comments, bool removeComments = true)
-        {
-            var result = new StringBuilder();
-            int i = 0;
-            int n = code.Length;
-            comments = new List<string>();
-
-            char? inString = null;
-            bool escape = false;
-
-            while (i < n)
-            {
-                char ch = code[i];
-
-                // String parsing logic
-                if (inString != null)
-                {
-                    result.Append(ch);
-
-                    if (escape)
-                    {
-                        escape = false;
-                    }
-                    else if (ch == '\\')
-                    {
-                        escape = true;
-                    }
-                    else if (ch == inString)
-                    {
-                        inString = null;  // end of string
+                        current.Append(ch);
                     }
 
                     i++;
                     continue;
                 }
-                else
+
+                if (inSingleLineComment)
                 {
-                    if (ch == '"' || ch == '\'')
+                    if (ch == '\n')
                     {
-                        inString = ch;
-                        result.Append(ch);
+                        segments.Add(new CodeBlock(CodeBlockType.CommentText, current.ToString()));
+                        current.Clear();
+                        type = CodeBlockType.CodeText;
+                        segments.Add(new CodeBlock(CodeBlockType.CodeText, ch.ToString())); // newline
+                        inSingleLineComment = false;
+                    }
+                    else
+                    {
+                        current.Append(ch);
+                    }
+                    i++;
+                    continue;
+                }
+
+                if (inMultiLineComment)
+                {
+                    if (i + multiLineEnd.Length <= n && code.Substring(i, multiLineEnd.Length) == multiLineEnd)
+                    {
+                        segments.Add(new CodeBlock(CodeBlockType.CommentText, current.ToString() ));
+                        current.Clear();
+                        type = CodeBlockType.CodeText;
+                        segments.Add(new CodeBlock(CodeBlockType.CodeText, multiLineEnd ));
+                        i += multiLineEnd.Length;
+                        inMultiLineComment = false;
+                        continue;
+                    }
+                    else
+                    {
+                        current.Append(ch);
                         i++;
                         continue;
                     }
                 }
 
-                    // Single-line
-                    var matchedSingle = delimiters.SingleLine
-                        .Where(sym => i + sym.Length <= n && code.Substring(i, sym.Length) == sym)
-                        .OrderByDescending(sym => sym.Length)
-                        .FirstOrDefault();
-
-                    if (matchedSingle != null)
+                // Detect string start
+                if (ch == '"' || ch == '\'')
+                {
+                    if (current.Length > 0)
                     {
-                        result.Append(matchedSingle);
-                        i += matchedSingle.Length;
-                        
-                        if (removeComments)
-                        {   
-                            while (i < n && code[i] != '\n')
-                            {
-                                i++;
-                            }
-                        }
-                        else
-                        {
-                            string temp = "";
-                            while (i < n && code[i] != '\n')
-                            {
-                                temp+=code[i];
-                                i++;
-                            }
-                            comments.Add(temp);
-                        }
-                        continue;
+                        segments.Add(new CodeBlock(type, current.ToString() ));
+                        current.Clear();
                     }
+                    type = CodeBlockType.StringText;
+                    stringChar = ch;
+                    inString = true;
+                    segments.Add(new CodeBlock(CodeBlockType.CodeText, ch.ToString() )); // opening quote
+                    i++;
+                    continue;
+                }
 
-                    // Multi-line
-                    var matchedMulti = delimiters.MultiLine
-                        .Where(pair => i + pair.Item1.Length <= n && code.Substring(i, pair.Item1.Length) == pair.Item1)
-                        .OrderByDescending(pair => pair.Item1.Length)
-                        .FirstOrDefault();
-
-                    if (matchedMulti != null)
+                // Detect single-line comment
+                var matchedSingle = delimiters.SingleLine
+                    .FirstOrDefault(sym => i + sym.Length <= n && code.Substring(i, sym.Length) == sym);
+                if (matchedSingle != null)
+                {
+                    if (current.Length > 0)
                     {
-                        string start = matchedMulti.Item1;
-                        string end = matchedMulti.Item2;
-
-                        result.Append(start);
-                        i += start.Length;
-
-                        if (removeComments)
-                        {   
-                            while (i < n && (i + end.Length > n || code.Substring(i, end.Length) != end))
-                            {
-                                i++;
-                            }
-                        }
-                        else
-                        {
-                            string temp ="";
-                            while (i < n && (i + end.Length > n || code.Substring(i, end.Length) != end))
-                            {
-                                temp+=code[i];
-                                i++;
-                            }
-                            comments.Add(temp);
-                        }
-                        if (i + end.Length <= n)
-                        {
-                            result.Append(" ");
-                            result.Append(end);
-                            i += end.Length;
-                        }
-
-                        continue;
+                        segments.Add(new CodeBlock(type, current.ToString() ));
+                        current.Clear();
                     }
+                    type = CodeBlockType.CommentText;
+                    inSingleLineComment = true;
+                    segments.Add(new CodeBlock(CodeBlockType.CodeText, matchedSingle )); // comment start
+                    i += matchedSingle.Length;
+                    continue;
+                }
 
-                result.Append(ch);
+
+                // Detect multi-line comment
+                var matchedMulti = delimiters.MultiLine
+                    .FirstOrDefault(pair => i + pair.Item1.Length <= n && code.Substring(i, pair.Item1.Length) == pair.Item1);
+                if (matchedMulti != null)
+                {
+                    if (current.Length > 0)
+                    {
+                        segments.Add(new CodeBlock(type, current.ToString() ));
+                        current.Clear();
+                    }
+                    type = CodeBlockType.CommentText;
+                    inMultiLineComment = true;
+                    multiLineEnd = matchedMulti.Item2;
+                    segments.Add(new CodeBlock(CodeBlockType.CodeText, matchedMulti.Item1 )); // comment start
+                    i += matchedMulti.Item1.Length;
+                    continue;
+                }
+
+                // Regular code
+                current.Append(ch);
                 i++;
             }
 
+            if (current.Length > 0)
+            {
+                segments.Add(new CodeBlock(type, current.ToString() ));
+            }
 
-            return result.ToString();
+            return segments;
         }
-
+        
         public static List<string> TokenizeCode(string codeText)
         {
             codeText = codeText.Replace("\t", " ");
@@ -441,145 +378,32 @@ namespace NGramm
             return result;
         }
         
-        private static string RemoveCommentsAndStrings(string code, CommentDelimiters delimiters, bool removeComments=true, bool removeStrings=true)
+        public static List<CodeBlock> CleanBlocks(List<CodeBlock> list)
         {
-            var result = new StringBuilder();
-            int i = 0;
-            int n = code.Length;
-            char? inString = null;
-            bool escape = false;
+            var cleaned = new List<CodeBlock>();
 
-            Tuple<string, string> activeMultiLine = null;
-            string activeSingleLine = null;
-            
-            while (i < n)
+            foreach (var block in list)
             {
-                char ch = code[i];
-
-                if (activeSingleLine == null && activeMultiLine == null)
-                {
-                    // Handle string literals
-                    if (inString != null)
-                    {
-                        if (escape)
-                        {
-                            escape = false;
-                            if (!removeStrings)
-                            {
-                                result.Append(ch);
-                            }
-                            i++; // Skip escaped character
-                            continue;
-                        }
-                        if (ch == '\\')
-                        {
-                            escape = true;
-                            i++;
-                            continue;
-                        }
-                        if (ch == inString)
-                        {
-                            result.Append(ch);
-                            inString = null; // Close string
-                            i++;
-                            continue;
-                        }
-                    
-                        if (!removeStrings)
-                        {
-                            result.Append(ch);
-                        }
-                        i++;
-                        continue;
-                    }
-
-                    // Start of a string
-                    if (ch == '"' || ch == '\'')
-                    {
-                        inString = ch;
-                        result.Append(ch); // Optionally keep the string start
-                        i++;
-                        continue;
-                    }
-                }
-
-                if (inString == null)
-                {
-                    // Handle active single-line comment
-                    if (activeSingleLine != null)
-                    {
-                        if (ch == '\n')
-                        {
-                            activeSingleLine = null;
-                            result.Append(' ');
-                        }
-                        i++;
-                        continue;
-                    }
-
-                    // Handle active multi-line comment
-                    if (activeMultiLine != null)
-                    {
-                        var (start, end) = activeMultiLine;
-                        if (i + end.Length <= n && code.Substring(i, end.Length) == end)
-                        {
-                            i += end.Length;
-                            result.Append(end);
-                            activeMultiLine = null;
-                        }
-                        else
-                        {
-                            i++;
-                        }
-                        continue;
-                    }
-                    
-                    if (removeComments)
-                    {
-                        string matchedSingle = delimiters.SingleLine
-                            .Where(sym => i + sym.Length <= n && code.Substring(i, sym.Length) == sym)
-                            .OrderBy(sym => sym.Length)
-                            .FirstOrDefault();
-
-                        if (matchedSingle != null)
-                        {
-                            activeSingleLine = matchedSingle;
-                            result.Append(activeSingleLine);
-                            i += matchedSingle.Length;
-                            continue;
-                        }
-
-                        // Check for new multi-line comment
-                        Tuple<string, string> matchedMulti = delimiters.MultiLine
-                            .Where(pair => i + pair.Item1.Length <= n && code.Substring(i, pair.Item1.Length) == pair.Item1)
-                            .OrderBy(pair => pair.Item1.Length)
-                            .FirstOrDefault();
-
-                        if (matchedMulti != null)
-                        {
-                            activeMultiLine = matchedMulti;
-                            result.Append(activeMultiLine.Item1);
-                            i += matchedMulti.Item1.Length;
-                            continue;
-                        }
-                    }
-                }
-
-                // Newlines -> space
-                if (ch == '\r' || ch == '\n')
-                {
-                    result.Append(' ');
-                    i++;
+                // Skip empty or whitespace-only blocks
+                if (string.IsNullOrWhiteSpace(block.Content))
                     continue;
-                }
 
-                result.Append(ch);
-                i++;
+                if (cleaned.Count > 0 && cleaned[cleaned.Count - 1].Type == block.Type)
+                {
+                    // Merge with previous block
+                    cleaned[cleaned.Count - 1].Content += ' ' + block.Content;
+                }
+                else
+                {
+                    cleaned.Add(new CodeBlock(
+                        block.Type,
+                        block.Content
+                    ));
+                }
             }
 
-            return result.ToString();
+            return cleaned;
         }
-    
 
         #endregion
 
@@ -656,7 +480,5 @@ namespace NGramm
         
         #endregion
     }
+    
 }
-
-// = слова код1, коментар1, код2, коментар2
-// != слова код1, код2, коментар1, коментар2
