@@ -18,6 +18,7 @@ namespace NGramm
         
         public ProgressReporter MyProgressReporter;
         
+        protected readonly string readTextToProcess;
         public readonly string Filename;
         protected readonly Encoding FileEncoding;
         
@@ -31,10 +32,11 @@ namespace NGramm
         
         public abstract HashSet<char> Endsigns { get; set; }
 
-        protected BasicNgrammProcessor(string filename, ProgressReporter reporter)
+        protected BasicNgrammProcessor(string filename, ProgressReporter reporter, string textToProcess)
         {
             Filename = filename;
             FileEncoding = Utils.GetEncoding(filename);
+            readTextToProcess = textToProcess;
             MyProgressReporter = reporter;
             CountDesiredVariables = 0;
         }

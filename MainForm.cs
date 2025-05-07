@@ -91,11 +91,12 @@ namespace NGramm
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                var text = File.ReadAllText(openFileDialog1.FileName);
                 if (isProgramText)
-                    processor = new ComplexNgrammProcessor(openFileDialog1.FileName, reporter, checkBoxComments.Checked, checkBoxStrings.Checked);
+                    processor = new ComplexNgrammProcessor(openFileDialog1.FileName, reporter, text, checkBoxComments.Checked, checkBoxStrings.Checked);
                     // processor = new CodeNaturalNgrammProcessor(openFileDialog1.FileName, reporter);
                 else
-                    processor = new NaturalNgrammProcessor(openFileDialog1.FileName, reporter);
+                    processor = new NaturalNgrammProcessor(openFileDialog1.FileName, reporter, text);
                 
                 EndSignsList.Text = new string(processor.Endsigns.ToArray());
                 
@@ -1066,7 +1067,7 @@ namespace NGramm
         private void MyForm_FormClosing(object sender, EventArgs e)
         {
             // DialogResult result = MessageBox.Show("Are you sure you want to close?", "Confirm", MessageBoxButtons.YesNo);
-            Utils.ClearDirectoryFiles("temp");
+            // Utils.ClearDirectoryFiles("temp");
         }
     }
 }

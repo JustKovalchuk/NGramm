@@ -36,18 +36,26 @@ namespace NGramm
     
     public class TokenizerUtils
     {
-        private static readonly Regex _startSpaces = new Regex(@"^\s+", RegexOptions.Compiled | RegexOptions.Multiline);
-        private static readonly Regex _endSpaces = new Regex(@"\s+$", RegexOptions.Compiled | RegexOptions.Multiline);
         public static readonly Regex SpacesInRow = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.Multiline);
         
         private static readonly char[] _skipSpaces = { '\u3000' };
-        
-        private static List<UnicodeCategory> nonRenderingCategories = new List<UnicodeCategory> {
+        private static readonly HashSet<UnicodeCategory> nonRenderingCategories = new HashSet<UnicodeCategory>
+        {
             UnicodeCategory.Control,
             UnicodeCategory.OtherNotAssigned,
             UnicodeCategory.Surrogate,
             UnicodeCategory.Format
         };
+        
+        #region GENERAL WORDS MANIPULATION
+
+        public static string[] WordsIntersection(string[] words1, string[] words2)
+        {
+            HashSet<string> wordsSet = new HashSet<string>(words1);
+            return words2.Where(word => wordsSet.Contains(word)).ToArray();
+        }
+        
+        #endregion
         
         #region CodeTextTokenize
         
@@ -451,20 +459,56 @@ namespace NGramm
             if (analysis.Kanji > 0)
                 return TokenizeChinese(inputText);
 
-
-            return inputText.Split(spacesList.ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            var spaceArray = spacesList.ToArray();
+            return inputText.Split(spaceArray, StringSplitOptions.RemoveEmptyEntries);
         }
         
         public static string[] TokenizeNatural(string inputText, HashSet<char> spacesList)
         {
-            var text = _startSpaces.Replace(inputText, "");
-            text = _endSpaces.Replace(text, "");
-            var textContainSpaces = text.Any(x => spacesList.Except(_skipSpaces).Contains(x));
+            if (string.IsNullOrWhiteSpace(inputText))
+                return Array.Empty<string>();
 
-            var splitList = new List<char>(spacesList);
-            splitList.Add('\n');
-            if (textContainSpaces) {
-                return text.Split(splitList.ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            // Trim початку та кінця — швидше, ніж Regex
+            string text = inputText.Trim();
+
+            // Швидка перевірка на наявність роздільників
+            bool hasSplitter = false;
+            foreach (char ch in text)
+            {
+                if (spacesList.Contains(ch) && !_skipSpaces.Contains(ch))
+                {
+                    hasSplitter = true;
+                    break;
+                }
+            }
+
+            if (hasSplitter)
+            {
+                // Розбивка вручну — без Regex і зайвих алокацій
+                List<string> tokens = new List<string>();
+                int start = 0;
+                for (int i = 0; i < text.Length; i++)
+                {
+                    if (spacesList.Contains(text[i]) || text[i] == '\n')
+                    {
+                        if (i > start)
+                        {
+                            string token = text.Substring(start, i - start);
+                            if (!string.IsNullOrWhiteSpace(token))
+                                tokens.Add(token);
+                        }
+                        start = i + 1;
+                    }
+                }
+
+                if (start < text.Length)
+                {
+                    string token = text.Substring(start);
+                    if (!string.IsNullOrWhiteSpace(token))
+                        tokens.Add(token);
+                }
+
+                return tokens.ToArray();
             }
             
             return TrySplitWords(text, spacesList);

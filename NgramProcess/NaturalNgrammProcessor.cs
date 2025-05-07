@@ -27,10 +27,7 @@ namespace NGramm
         private static string[] consequtive_spaces_pattern = spaces_list.Select(x => $"({x})+").ToArray();
         private readonly Regex spaces_pattern = new Regex($"({string.Join("|", consequtive_spaces_pattern)})", RegexOptions.Compiled);
         
-        public NaturalNgrammProcessor(string filename, ProgressReporter reporter): base(filename, reporter)
-        {
-            CountDesiredVariables = 0;
-        }
+        public NaturalNgrammProcessor(string filename, ProgressReporter reporter, string textToProcess): base(filename, reporter, textToProcess) { }
         
         public override async Task PreprocessAsync()
         {
@@ -45,7 +42,7 @@ namespace NGramm
                 MyProgressReporter?.StartNewOperation("Ініціалізація");
                 MyProgressReporter?.MoveProgress(5);
                 
-                _rawTextorg = regExp.Replace(File.ReadAllText(Filename), " ").Trim().Replace("\r", "");
+                _rawTextorg = regExp.Replace(readTextToProcess, " ").Trim().Replace("\r", "");
                 
                 MyProgressReporter?.MoveProgress(5);
                 
@@ -407,18 +404,8 @@ namespace NGramm
         public override NGrammContainer IntermediateProcessWordNgrmmToContainer(
             NGrammContainer container, string[] words, int n, bool skipss, bool ignoreCase, int progressMul)
         {
-            var currentProcessorWords = Words();
-            
-            var resultWords =  new List<string>();
-            foreach (var word in currentProcessorWords)
-            {
-                if (words.Contains(word))
-                {
-                    resultWords.Add(word);
-                }
-            }
-
-            words = resultWords.ToArray();
+            string[] currentProcessorWords = Words();
+            words = TokenizerUtils.WordsIntersection(words, currentProcessorWords);
             
             bool breaked;
             int ct = 1;
@@ -450,10 +437,9 @@ namespace NGramm
                             if (word.Length > 1 && TokenizerUtils.IsEndSign(word[word.Length - 1], Endsigns))
                                 word = word.Remove(word.Length - 1);
 
-                            if (ngramBuilder.Length == 0)
-                                ngramBuilder.Append(word);
-                            else
-                                ngramBuilder.Append($" {word}");
+                            if (ngramBuilder.Length > 0)
+                                ngramBuilder.Append(' ');
+                            ngramBuilder.Append(word);
                         }
                         else
                         {

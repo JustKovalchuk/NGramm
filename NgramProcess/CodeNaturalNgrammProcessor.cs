@@ -12,17 +12,14 @@ namespace NGramm
     {
         private string _codeTextorg = "";
         
-        public CodeNaturalNgrammProcessor(string filename, ProgressReporter reporter) 
-            : base(filename, reporter)
-        {
-            Console.WriteLine("modified by LiberMaeotis creators (GDG 2025)");
-        }
+        public CodeNaturalNgrammProcessor(string filename, ProgressReporter reporter, string textToProcess) 
+            : base(filename, reporter, textToProcess) { }
         
         public override async Task PreprocessAsync()
         {
             await base.PreprocessAsync();
 
-            _codeTextorg = File.ReadAllText(Filename); //Trim().Replace("\r", "");
+            _codeTextorg = readTextToProcess.Trim(); //.Replace("\r", "");
         }
         
         public override List<NGrammContainer> ProcessWordNGrammsInWindow(string[] words ,int n, int windowSize, int windowStep, int startPos, int endPos)
@@ -56,17 +53,7 @@ namespace NGramm
             ignoreCase = false;
             
             var currentProcessorWords = Words();
-            
-            var resultWords =  new List<string>();
-            foreach (var word in currentProcessorWords)
-            {
-                if (words.Contains(word))
-                {
-                    resultWords.Add(word);
-                }
-            }
-
-            words = resultWords.ToArray();
+            words = TokenizerUtils.WordsIntersection(words, currentProcessorWords);
 
             
             

@@ -9,16 +9,16 @@ namespace NGramm
 {
     public class CommentNgramProcessor : NaturalNgrammProcessor
     {
-        public CommentNgramProcessor(string filename, ProgressReporter reporter): base(filename, reporter) { }
+        public CommentNgramProcessor(string filename, ProgressReporter reporter, string textToProcess): base(filename, reporter, textToProcess) { }
     }
     public class StringNgramProcessor : NaturalNgrammProcessor
     {
-        public StringNgramProcessor(string filename, ProgressReporter reporter): base(filename, reporter) { }
+        public StringNgramProcessor(string filename, ProgressReporter reporter, string textToProcess): base(filename, reporter, textToProcess) { }
     }
     
     public class ComplexNgrammProcessor : BasicNgrammProcessor
     {
-        private string tempDirName = "temp";
+        // private string tempDirName = "temp";
         
         public static bool removeCodeComments;
         public static bool removeCodeStrings;
@@ -35,49 +35,50 @@ namespace NGramm
         private NaturalNgrammProcessor _fullTextProcessor;
         private List<BasicNgrammProcessor> processors = new List<BasicNgrammProcessor>();
         
-        public ComplexNgrammProcessor(string filename, ProgressReporter reporter, bool removeComments, bool removeStrings): 
-            base(filename, reporter)
+        public ComplexNgrammProcessor(string filename, ProgressReporter reporter, string textToProcess, bool removeComments, bool removeStrings): 
+            base(filename, reporter, textToProcess)
         {
             removeCodeComments = removeComments;
             removeCodeStrings = removeStrings;
 
-            _fullTextProcessor = new NaturalNgrammProcessor(filename, null);
+            _fullTextProcessor = new NaturalNgrammProcessor(filename, null, textToProcess);
             
             Utils.GetCommentsByExtension(Filename, out CommentDelimiters delimiter, out bool canRecognizeComments);
             canRemoveComments = canRecognizeComments;
             _delimiter = delimiter;
+            
+            Console.WriteLine("modified by LiberMaeotis creators (GDG 2025)");
         }
         
         public override async Task PreprocessAsync()
         {
-            var text = File.ReadAllText(Filename).Trim().Replace("\r", "");
+            var text = readTextToProcess.Trim().Replace("\r", "");
             List<CodeBlock> codeBlocks = TokenizerUtils.ParseCodeSegments(text, _delimiter);
             codeBlocks = TokenizerUtils.CleanBlocks(codeBlocks);
 
             int i =  1;
-            Directory.CreateDirectory(tempDirName);
-            Utils.ClearDirectoryFiles(tempDirName);
+            // Directory.CreateDirectory(tempDirName);
+            // Utils.ClearDirectoryFiles(tempDirName);
             foreach (var codeBlock in codeBlocks)
             {
-                string extension = ".txt";
-                if (codeBlock.Type == CodeBlockType.CodeText)
-                { 
-                    extension = Path.GetExtension(Filename);
-                }
+                // string extension = ".txt";
+                // if (codeBlock.Type == CodeBlockType.CodeText)
+                // { 
+                //     extension = Path.GetExtension(Filename);
+                // }
+                //
+                // string textPieceFilename = $"temp/{i}_output_{codeBlock.Type.ToString()}{extension}";
+                //
+                // File.WriteAllText(textPieceFilename, codeBlock.Content);
 
-                string textPieceFilename = $"temp/{i}_output_{codeBlock.Type.ToString()}{extension}";
-                
-                File.WriteAllText(textPieceFilename, codeBlock.Content);
-                Console.WriteLine("Wrote file!" + textPieceFilename);
-
                 if (codeBlock.Type == CodeBlockType.CodeText)
-                    processors.Add(new CodeNaturalNgrammProcessor(textPieceFilename, null));
+                    processors.Add(new CodeNaturalNgrammProcessor(Filename, null, codeBlock.Content));
                 else if (codeBlock.Type == CodeBlockType.CommentText)
-                    processors.Add(new CommentNgramProcessor(textPieceFilename, null));
+                    processors.Add(new CommentNgramProcessor(Filename, null, codeBlock.Content));
                 else if (codeBlock.Type == CodeBlockType.StringText)
-                    processors.Add(new StringNgramProcessor(textPieceFilename, null));
+                    processors.Add(new StringNgramProcessor(Filename, null, codeBlock.Content));
                 else
-                    processors.Add(new NaturalNgrammProcessor(textPieceFilename, null));
+                    processors.Add(new NaturalNgrammProcessor(Filename, null, codeBlock.Content));
                 i++;
             }
             
@@ -182,7 +183,7 @@ namespace NGramm
         public override string[] Words()
         {
             string[] result = Array.Empty<string>();
-            Directory.CreateDirectory(tempDirName);
+            // Directory.CreateDirectory(tempDirName);
             
             foreach (var processor in processors)
             {
@@ -194,26 +195,23 @@ namespace NGramm
                 var temp = processor.Words();
                 result = result.Concat(temp).ToArray();
 
-                string textPieceFilename = processor.Filename;
-                
-                textPieceFilename = textPieceFilename.Replace("output", "words");
-                textPieceFilename = Path.ChangeExtension(textPieceFilename, ".txt");
-                try
-                {
-                    if (!File.Exists(textPieceFilename))
-                    {
-                        string tempText = string.Join(" ", temp);
-
-                        Console.WriteLine(textPieceFilename);
-
-                        File.WriteAllText(textPieceFilename, tempText);
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Error saving debug file!");
-                }
-                
+                // string textPieceFilename = processor.Filename;
+                //
+                // textPieceFilename = textPieceFilename.Replace("output", "words");
+                // textPieceFilename = Path.ChangeExtension(textPieceFilename, ".txt");
+                // try
+                // {
+                //     if (!File.Exists(textPieceFilename))
+                //     {
+                //         string tempText = string.Join(" ", temp);
+                //
+                //         File.WriteAllText(textPieceFilename, tempText);
+                //     }
+                // }
+                // catch
+                // {
+                //     Console.WriteLine("Error saving debug file!");
+                // }
             }
 
             return result;

@@ -154,13 +154,7 @@ namespace NGramm
                         }
 
                         double lstCount = wn.Item2.Length;
-                        var tmp1 = sum;
-                        var tmp2 = sq_sum;
-                        var tmp1_1 = sum / lstCount;
-                        var tmp2_1 = sq_sum / lstCount;
-                        var tmp3 = wn.Item1;
                         
-                        Console.WriteLine($"Hips calculate: tmp1={tmp1}; tmp2={tmp2} tmp1_1={tmp1_1} tmp2_1={tmp2_1} tmp3={tmp3} lstCount={lstCount}");
                         hips.Add(wn.Item1, sum / lstCount);
                         hipssq.Add(wn.Item1, sq_sum / lstCount);
                     }
@@ -184,7 +178,6 @@ namespace NGramm
                 ListViewItem nli = new ListViewItem(item.ToString());
                 nli.SubItems.Add(hips[item].ToString());
                 nli.SubItems.Add(Math.Sqrt(hipssq[item] - hips[item] * hips[item]).ToString());
-                Console.WriteLine($"1={item.ToString()};\n2={hips[item].ToString()};\n3={Math.Sqrt(hipssq[item] - hips[item] * hips[item]).ToString()}\n\n");
                 listView1.Items.Add(nli);
             }
             drawChart();
